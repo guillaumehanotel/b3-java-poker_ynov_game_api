@@ -31,6 +31,7 @@ public class Game {
     private List<Round> rounds;
     private Integer smallBlind;
     private Integer bigBlind;
+    @JsonIgnore
     public BlockingQueue<Game> pipe = new LinkedBlockingQueue<>();
 
     public Game() {
@@ -53,7 +54,7 @@ public class Game {
 
     public void addPlayer(User user) throws Exception {
         if (!checkIfUserIsAlreadyInGame(user)) {
-            this.players.add(new Player(user, startingChips));
+            this.players.add(new Player(user, startingChips, this));
             log.info("Player [" + user.getUsername() + "] join the game n°" + this.getId());
             startGameIfAllPlayersHere();
         } else {

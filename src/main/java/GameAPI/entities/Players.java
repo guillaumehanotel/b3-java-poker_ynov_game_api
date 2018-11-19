@@ -3,6 +3,8 @@ package GameAPI.entities;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Slf4j
 public class Players extends ArrayList<Player> {
@@ -70,6 +72,18 @@ public class Players extends ArrayList<Player> {
             throw new RuntimeException("CurrentIndex too big");
         }
         this.currentOrderIndex = currentOrderIndex;
+    }
+
+    HashMap<PlayerStatus, List<Player>> getPlayersByResult() {
+        HashMap<PlayerStatus, List<Player>> players = new HashMap<>();
+        players.put(PlayerStatus.WINNER, new ArrayList<>());
+        players.put(PlayerStatus.LOOSER, new ArrayList<>());
+        Player winner = stream().max(Player::comparesCards).orElse(null);
+        for (Player player : this) {
+            if (player.comparesCards(winner) == 0) players.get(PlayerStatus.WINNER).add(player);
+            else if (player.comparesCards(winner) == -1) players.get(PlayerStatus.LOOSER).add(player);
+        }
+        return players;
     }
 
 }
