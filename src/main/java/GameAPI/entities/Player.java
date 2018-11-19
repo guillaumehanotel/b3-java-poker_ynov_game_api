@@ -110,7 +110,7 @@ public class Player {
         return bestCombination.compares(playerBestCombination);
     }
 
-    private Combination getBestCombination() {
+    public Combination getBestCombination() {
         List<Combination> combinations = new ArrayList<Combination>() {
             @Override
             public boolean add(Combination o) {
@@ -144,7 +144,7 @@ public class Player {
     private Cards getAllCards() {
         Cards allCards = new Cards();
         allCards.addAll(downCards);
-        allCards.addAll(game.getRounds().get(game.getRounds().size() - 1).getCommunityCards());
+        allCards.addAll(game.getLastCommunityCards());
         return allCards;
     }
 

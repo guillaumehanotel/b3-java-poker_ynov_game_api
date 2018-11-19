@@ -51,9 +51,6 @@ public class Round {
      */
     private void initRound() {
         players.forEach(Player::resetRound);
-        if (game.getRounds().size() != 0) {
-            game.incrementDealerPosition();
-        }
         applyBlindsBet();
         handOutCards();
     }
@@ -156,6 +153,7 @@ public class Round {
         List<Player> playersStillPlaying =  players.stream()
                 .filter(playerRound -> !playerRound.getHasDropped())
                 .collect(Collectors.toList());
+        // todo replace by stream method
         for (Player player : playersStillPlaying){
             if (!player.getHasPlayTurn()){
                 return false;

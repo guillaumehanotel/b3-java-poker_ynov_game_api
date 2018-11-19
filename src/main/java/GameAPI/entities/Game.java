@@ -1,5 +1,6 @@
 package GameAPI.entities;
 
+import GameAPI.entities.cards.Card;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -105,5 +106,9 @@ public class Game {
         return "Game{" + gameStatus +
                 ", players=" + players +
                 '}';
+    }
+
+    List<Card> getLastCommunityCards() {
+      return rounds.get(rounds.size() - 1).getCommunityCards();
     }
 }
