@@ -111,13 +111,7 @@ public class Player {
     }
 
     public Combination getBestCombination() {
-        List<Combination> combinations = new ArrayList<Combination>() {
-            @Override
-            public boolean add(Combination o) {
-                if (o == null) return false;
-                return super.add(o);
-            }
-        };
+        List<Combination> combinations = new ArrayList<>();
         Cards allCards = getAllCards();
         try {
             combinations.add(new Hauteur(allCards));

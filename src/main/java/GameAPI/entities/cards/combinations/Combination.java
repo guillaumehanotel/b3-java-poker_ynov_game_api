@@ -10,7 +10,7 @@ public abstract class Combination {
     this.value = value;
   }
 
-  abstract Integer comparesWithSame(Combination combination);
+  abstract protected Integer comparesWithSame(Combination combination);
 
   public Integer compares(Combination combination) {
     if (value > combination.value) {
