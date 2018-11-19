@@ -40,7 +40,7 @@ public class GameController {
      * Si tout est ok, alors on passe l'action au service qui va l'éxecuter
      */
     @RequestMapping(value = "/action", method = RequestMethod.POST)
-    Game handleAction(@RequestBody Action action) {
+    Game handleAction(@RequestBody Action action) throws InterruptedException {
         Game game = null;
 
         if (checkAction(action)) {
@@ -61,7 +61,7 @@ public class GameController {
                 log.error(e.getMessage());
             }
         }
-        return game;
+        return game != null ? game.pipe.take() : null;
     }
 
     /**

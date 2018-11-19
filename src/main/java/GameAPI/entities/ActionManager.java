@@ -69,9 +69,10 @@ public class ActionManager {
             }
 
             // Une fois qu'un player a joué, on met une protection pour le prochain player
+            game.pipe.put(game);
             game.getActionGuard().expectActionFrom(round.getPlayers().getNextPlayingPlayer());
 
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
