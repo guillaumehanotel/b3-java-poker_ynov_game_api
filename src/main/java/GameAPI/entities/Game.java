@@ -1,5 +1,6 @@
 package GameAPI.entities;
 
+import GameAPI.entities.cards.Card;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class Game {
     @JsonIgnore
     public BlockingQueue<Game> actionQueue = new LinkedBlockingQueue<>();
 
+
     public Game() {
         incrementGameId();
         this.gameFlags = new ArrayList<>();
@@ -58,7 +60,7 @@ public class Game {
 
     public void addPlayer(User user) throws Exception {
         if (!checkIfUserIsAlreadyInGame(user)) {
-            this.players.add(new Player(user, startingChips));
+            this.players.add(new Player(user, startingChips, this));
             log.info("Player [" + user.getUsername() + "] join the game n°" + this.getId());
             startGameIfAllPlayersHere();
         } else {
@@ -115,5 +117,9 @@ public class Game {
         return "Game{" + gameStatus +
                 ", players=" + players +
                 '}';
+    }
+
+    List<Card> getLastCommunityCards() {
+      return rounds.get(rounds.size() - 1).getCommunityCards();
     }
 }

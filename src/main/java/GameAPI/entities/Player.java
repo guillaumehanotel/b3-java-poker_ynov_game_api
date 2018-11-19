@@ -1,6 +1,10 @@
 package GameAPI.entities;
 
 import GameAPI.entities.cards.Card;
+import GameAPI.entities.cards.Cards;
+import GameAPI.entities.cards.combinations.*;
+import GameAPI.entities.cards.combinations.exceptions.CombinationCreationError;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,15 +16,21 @@ import java.util.List;
 public class Player {
 
     private User user;
+    private Game game;
     private Integer chips;
     private Boolean isEliminated;
     private Boolean hasDropped;
     private Integer currentBet;
     private Boolean hasPlayTurn;
     private List<Card> downCards;
+    private Combination combination;
+    private Integer earnedMoney;
+    @JsonIgnore
+    private Combination _combination; //store combination without showing it in json
 
-    public Player(User user, Integer startingChips) {
+    public Player(User user, Integer startingChips, Game game) {
         this.user = user;
+        this.game = game;
 
         // lié à une partie
         this.isEliminated = false;
@@ -89,5 +99,62 @@ public class Player {
     @Override
     public String toString() {
         return String.valueOf(user) + "\n";
+    }
+
+    public Integer comparesCards(Player player) {
+        Combination bestCombination = getBestCombination();
+        Combination playerBestCombination = player.getBestCombination();
+        if (bestCombination == null && playerBestCombination == null) return 0;
+        else if (bestCombination == null) return -1;
+        else if (playerBestCombination == null) return 1;
+        return bestCombination.compares(playerBestCombination);
+    }
+
+    public Combination getBestCombination() {
+        List<Combination> combinations = new ArrayList<Combination>() {
+            @Override
+            public boolean add(Combination o) {
+                if (o == null) return false;
+                return super.add(o);
+            }
+        };
+        Cards allCards = getAllCards();
+        try {
+            combinations.add(new Hauteur(allCards));
+        } catch (CombinationCreationError ignored) {
+        }
+        try {
+            combinations.add(new Paire(allCards));
+        } catch (CombinationCreationError ignored) {
+        }
+        try {
+            combinations.add(new Full(allCards));
+        } catch (CombinationCreationError ignored) {
+        }
+        try {
+            combinations.add(new DoublePaire(allCards));
+        } catch (CombinationCreationError ignored) {
+        }
+        Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
+        System.out.println(toString() + " : " + bestCombination);
+        this._combination = bestCombination;
+        return bestCombination;
+    }
+
+    private Cards getAllCards() {
+        Cards allCards = new Cards();
+        allCards.addAll(downCards);
+        allCards.addAll(game.getLastCommunityCards());
+        return allCards;
+    }
+
+    public void win(Integer earnedMoney) {
+        this.chips += earnedMoney;
+        this.combination = _combination;
+        this.earnedMoney = earnedMoney;
+    }
+
+    void loose() {
+        this.chips -= this.currentBet;
     }
 }

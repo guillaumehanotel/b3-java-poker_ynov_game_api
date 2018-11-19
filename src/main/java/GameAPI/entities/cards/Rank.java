@@ -22,7 +22,7 @@ public enum Rank {
         this.rank = rank;
     }
 
-    private Integer getRank(){
+    public Integer getValue(){
         return this.rank;
     }
 
