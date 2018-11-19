@@ -3,7 +3,7 @@ package GameAPI.entities.cards.combinations;
 
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
-import GameAPI.entities.cards.combinations.exceptions.CombinationCreationError;
+import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
 
 import java.util.Comparator;
 
@@ -15,7 +15,7 @@ public class Brelan extends Combination {
     cards.getRanksByMinimumNbr(3)
         .stream()
         .max(Comparator.comparingInt(Rank::getValue))
-        .orElseThrow(() -> new CombinationCreationError("Error while creating brelan"));
+        .orElseThrow(() -> new CombinationNotPresentException("Error while creating brelan"));
   }
 
   @Override

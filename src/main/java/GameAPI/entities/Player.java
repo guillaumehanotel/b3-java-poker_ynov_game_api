@@ -3,7 +3,7 @@ package GameAPI.entities;
 import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.combinations.*;
-import GameAPI.entities.cards.combinations.exceptions.CombinationCreationError;
+import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -121,19 +121,23 @@ public class Player {
         Cards allCards = getAllCards();
         try {
             combinations.add(new Hauteur(allCards));
-        } catch (CombinationCreationError ignored) {
+        } catch (CombinationNotPresentException ignored) {
         }
         try {
             combinations.add(new Paire(allCards));
-        } catch (CombinationCreationError ignored) {
-        }
-        try {
-            combinations.add(new Full(allCards));
-        } catch (CombinationCreationError ignored) {
+        } catch (CombinationNotPresentException ignored) {
         }
         try {
             combinations.add(new DoublePaire(allCards));
-        } catch (CombinationCreationError ignored) {
+        } catch (CombinationNotPresentException ignored) {
+        }
+        try {
+            combinations.add(new Brelan(allCards));
+        } catch (CombinationNotPresentException ignored) {
+        }
+        try {
+            combinations.add(new Full(allCards));
+        } catch (CombinationNotPresentException ignored) {
         }
         Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
         System.out.println(toString() + " : " + bestCombination);

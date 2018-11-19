@@ -3,7 +3,7 @@ package GameAPI.entities.cards.combinations;
 import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
-import GameAPI.entities.cards.combinations.exceptions.CombinationCreationError;
+import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ public class DoublePaire extends Combination {
         .limit(2)
         .collect(Collectors.toList());
     if (collect.size() < 2) {
-      throw new CombinationCreationError("Illegal DoublePaire ranks");
+      throw new CombinationNotPresentException("Illegal DoublePaire ranks");
     }
     ranks = collect;
   }

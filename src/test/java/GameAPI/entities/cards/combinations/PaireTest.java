@@ -4,7 +4,7 @@ import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
 import GameAPI.entities.cards.Suit;
-import GameAPI.entities.cards.combinations.exceptions.CombinationCreationError;
+import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +45,7 @@ class PaireTest {
         new Card(Suit.CLUB, Rank.Ace),
         new Card(Suit.CLUB, Rank.Eight)
     );
-    assertThrows(CombinationCreationError.class, () -> new Paire(sourceCards));
+    assertThrows(CombinationNotPresentException.class, () -> new Paire(sourceCards));
   }
 
   @Test

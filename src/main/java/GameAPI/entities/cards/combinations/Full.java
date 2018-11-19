@@ -2,7 +2,7 @@ package GameAPI.entities.cards.combinations;
 
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
-import GameAPI.entities.cards.combinations.exceptions.CombinationCreationError;
+import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
 
 import java.util.Comparator;
 
@@ -18,17 +18,17 @@ public class Full extends Combination {
     this.doubleRank = doubleRank;
   }
 
-  public Full(Cards cards) throws CombinationCreationError {
+  public Full(Cards cards) throws CombinationNotPresentException {
     super(value);
     tripletRank = cards.getRanksByMinimumNbr(3)
         .stream()
         .max(Comparator.comparingInt(Rank::getValue))
-        .orElseThrow(() -> new CombinationCreationError("Full triplet is null"));
+        .orElseThrow(() -> new CombinationNotPresentException("Full triplet is null"));
     doubleRank = cards.getRanksByMinimumNbr(2)
         .stream()
         .filter(rank -> rank != tripletRank)
         .max(Comparator.comparingInt(Rank::getValue))
-        .orElseThrow(() -> new CombinationCreationError("Full double is null"));
+        .orElseThrow(() -> new CombinationNotPresentException("Full double is null"));
   }
 
   @Override

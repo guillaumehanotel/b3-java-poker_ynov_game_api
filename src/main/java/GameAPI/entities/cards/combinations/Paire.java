@@ -2,7 +2,7 @@ package GameAPI.entities.cards.combinations;
 
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
-import GameAPI.entities.cards.combinations.exceptions.CombinationCreationError;
+import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
 
 import java.util.Comparator;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public class Paire extends Combination {
     rank = cards.getRanksByMinimumNbr(2)
         .stream()
         .max(Comparator.comparingInt(Rank::getValue))
-        .orElseThrow(() -> new CombinationCreationError("bad paire creation"));
+        .orElseThrow(() -> new CombinationNotPresentException("bad paire creation"));
   }
 
   static Integer getNextValue() {
