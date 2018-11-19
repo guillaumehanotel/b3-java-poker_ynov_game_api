@@ -36,12 +36,12 @@ public class ActionGuard {
         Long userId = player.getUser().getId();
         this.actionExpected = true;
         this.userId = userId;
-        log.info("EXPECTED ACTION FROM USER n°" + userId);
+        log.info("[EXPECT ACTION FROM USER n°" + userId + "]");
     }
 
     public void forbidActions(){
         this.actionExpected = false;
         this.userId = null;
-        log.info("FORBID ACTIONS");
+        log.info("[FORBID ACTIONS]");
     }
 }

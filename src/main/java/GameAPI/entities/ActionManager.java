@@ -43,7 +43,7 @@ public class ActionManager {
     }
 
     /**
-     * Quand une action est attendu, méthode appelé continuellement pour vérifier qu'il y a une action à faire
+     * Quand une action est attendu, méthode appelé continuellement pour vérifier joinQueue'il y a une action à faire
      */
     public boolean checkPlayerAction(Round round) {
         if (playerAction != null) {
@@ -68,11 +68,19 @@ public class ActionManager {
                 }
             }
 
+            // on peut enregistrer le jeu actuel dans la actionQueue après l'action jouée pour pouvoir retourner le nouvel état du jeu dans la réponse de la requête
+            if(round.turnNotFinishCondition()) {
+                try {
+                    game.actionQueue.put(game);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             // Une fois qu'un player a joué, on met une protection pour le prochain player
-            game.pipe.put(game);
             game.getActionGuard().expectActionFrom(round.getPlayers().getNextPlayingPlayer());
 
-        } catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
@@ -83,7 +91,7 @@ public class ActionManager {
      * Lorsqu'une requete arrive, on prend l'action et on en retire une méthode et optionellement un paramètre Integer
      */
     public void saveAction(Action action) {
-        log.info("Action saved");
+        log.info("[ACTION ACCEPTED]");
         this.playerAction = actionMap.get(action.getActionType());
         this.actionParameter = action.getValue();
     }

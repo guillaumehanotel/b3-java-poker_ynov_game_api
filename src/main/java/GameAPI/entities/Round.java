@@ -2,6 +2,7 @@ package GameAPI.entities;
 
 import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Deck;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,8 +15,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Round {
 
+    @JsonIgnore
     private Game game;
+    @JsonIgnore
     private Deck deck;
+    @JsonIgnore
     private Players players;
     private List<Card> communityCards;
     private TurnPhase currentTurnPhase;
@@ -27,12 +31,12 @@ public class Round {
         this.players.addAll(game.getNonEliminatedPlayers());
         this.communityCards = new ArrayList<>();
         this.currentTurnPhase = TurnPhase.PREFLOP;
-        this.start();
     }
 
 
     public void start() {
-        log.info("START ROUND");
+        log.info("[ROUND] START");
+        game.addFlag(GameFlag.NEW_ROUND);
         initRound();
         int i = 0;
         int nbPhase = TurnPhase.values().length;
@@ -42,10 +46,10 @@ public class Round {
             i++;
         }
         showDown();
+        log.info("[ROUND] FINISHED");
     }
 
     /**
-     * Incrémentation du dealer
      * Mise des blinds
      * Distribution des cartes
      */
@@ -56,7 +60,7 @@ public class Round {
     }
 
     private void applyBlindsBet() {
-        this.players.setCurrentOrderIndex(this.game.getDealerPosition());
+        this.players.setCurrentOrderIndex(this.game.getDealerPosition() + 1);
         this.players.getNextPlaying().bets(game.getSmallBlind());
         this.players.getNextPlaying().bets(game.getBigBlind());
     }
@@ -76,11 +80,18 @@ public class Round {
      * - tout le monde (pas couché) aient la même mise
      */
     public void startTurn() {
-        log.info("Start TURN");
+        log.info("[TURN] START");
+        game.addFlag(GameFlag.NEW_TURN);
         initTurn();
         game.getActionGuard().expectActionFrom(players.getPlayingPlayer());
 
-        log.info("waiting for an action from player [" + players.getPlayingPlayer().getUser().getUsername() + "]");
+        try {
+            game.joinQueue.put(game);
+            game.actionQueue.put(game);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         while (turnNotFinish()) {
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
@@ -88,8 +99,9 @@ public class Round {
                 e.printStackTrace();
             }
         }
-        log.info("Turn is finished");
+
         game.getActionGuard().forbidActions();
+        log.info("[TURN] FINISHED");
     }
 
     public void initTurn() {
@@ -104,30 +116,30 @@ public class Round {
     }
 
     public void setupPreFlop() {
-        log.info("== PREFLOP ==");
+        log.info("[TURN] PREFLOP");
         players.setCurrentOrderIndex(game.getDealerPosition() + 3);
     }
 
     public void setupFlop() {
-        log.info("== FLOP ==");
+        log.info("[TURN] FLOP");
         players.setCurrentOrderIndex(game.getDealerPosition() + 1);
         communityCards.addAll(deck.drawCards(3));
     }
 
     public void setupTurn() {
-        log.info("== TURN ==");
+        log.info("[TURN] TURN");
         players.setCurrentOrderIndex(game.getDealerPosition() + 1);
         communityCards.addAll(deck.drawCards(1));
     }
 
     public void setupRiver() {
-        log.info("== RIVER ==");
+        log.info("[TURN] RIVER");
         players.setCurrentOrderIndex(game.getDealerPosition() + 1);
         communityCards.addAll(deck.drawCards(1));
     }
 
     private void showDown() {
-        log.info("== SHOWDOWN ==");
+        log.info("[TURN] SHOWDOWN");
         HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult();
         Integer pot = players.stream().mapToInt(Player::getCurrentBet).sum();
         List<Player> winners = playersByResult.get(PlayerStatus.WINNER);
@@ -140,10 +152,11 @@ public class Round {
      * Le tour n'est pas fini tant que les 2 conditions ne sont pas remplis
      */
     private boolean turnNotFinish() {
-        //log.info(haveAllPlayersPlayed() ? "tous les joueurs ont joué" : "tous les joueurs n'ont pas joués");
-        //log.info(haveAllPlayersEqualBet() ? "tous les joueurs ont la meme mise" : "tous les joueurs n'ont pas la meme mise");
-
         return (!haveAllPlayersPlayed() || !haveAllPlayersEqualBet()) && game.getActionManager().checkPlayerAction(this);
+    }
+
+    public boolean turnNotFinishCondition(){
+        return (!haveAllPlayersPlayed() || !haveAllPlayersEqualBet());
     }
 
     /**
@@ -176,4 +189,5 @@ public class Round {
         Optional<Player> player = players.stream().max(Comparator.comparingInt(Player::getCurrentBet));
         return player.isPresent() ? player.get().getCurrentBet() : Integer.valueOf(0);
     }
+
 }
