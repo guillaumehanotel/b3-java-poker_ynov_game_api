@@ -26,4 +26,11 @@ public enum Rank {
         return this.rank;
     }
 
+    public Integer compares(Rank rank) {
+        // todo use it everywhere
+        if (this.getValue() > rank.getValue()) return 1;
+        else if (this.getValue() < rank.getValue()) return -1;
+        return 0;
+    }
+
 }

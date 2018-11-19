@@ -8,9 +8,13 @@ import java.util.Comparator;
 
 public class Full extends Combination {
 
-  private static Integer value = DoublePaire.getNextValue();
+  private static Integer value = Brelan.getNextValue();
   private Rank doubleRank;
   private Rank tripletRank;
+
+  public static Integer getNextValue() {
+    return value;
+  }
 
   Full(Rank tripletRank, Rank doubleRank) {
     super(value);
