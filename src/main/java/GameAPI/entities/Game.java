@@ -20,6 +20,7 @@ public class Game {
     private static Integer nbGame = 0;
 
     private Integer id;
+    private List<GameFlag> gameFlags;
     private GameStatus gameStatus;
     private List<Player> players;
     private Integer startingChips;
@@ -31,10 +32,14 @@ public class Game {
     private List<Round> rounds;
     private Integer smallBlind;
     private Integer bigBlind;
-    public BlockingQueue<Game> pipe = new LinkedBlockingQueue<>();
+    @JsonIgnore
+    public BlockingQueue<Game> joinQueue = new LinkedBlockingQueue<>();
+    @JsonIgnore
+    public BlockingQueue<Game> actionQueue = new LinkedBlockingQueue<>();
 
     public Game() {
         incrementGameId();
+        this.gameFlags = new ArrayList<>();
         this.gameStatus = GameStatus.STARTING_PENDING;
         this.players = new ArrayList<>();
         this.startingChips = STARTING_CHIPS;
@@ -67,17 +72,21 @@ public class Game {
 
     public void startGameIfAllPlayersHere() {
         if (this.players.size() == NB_PLAYER_MAX) {
-            GameResponse.getInstance().addGame(this);
+            this.setGameStatus(GameStatus.IN_PROGRESS);
             new Thread(this::start).start();
         }
     }
 
     public void start() {
-        log.info("start GAME " + id);
-        this.setGameStatus(GameStatus.IN_PROGRESS);
+        log.info("[GAME " + id + "] START");
+        this.gameFlags.add(GameFlag.GAME_STARTED);
         while (!gameHasWinner()) {
-            this.rounds.add(new Round(this));
+            Round round = new Round(this);
+            this.rounds.add(round);
+            round.start();
         }
+        log.info("[GAME " + id + "] FINISHED");
+        this.gameStatus = GameStatus.FINISHED;
     }
 
     private boolean gameHasWinner() {
@@ -91,12 +100,14 @@ public class Game {
                 .collect(Collectors.toList());
     }
 
-    public void incrementDealerPosition() {
-        if (this.dealerPosition + 1 > getNonEliminatedPlayers().size() - 1) {
-            this.dealerPosition = 0;
-        } else {
-            this.dealerPosition++;
-        }
+    public void resetRequest(){
+        this.actionQueue.clear();
+        this.joinQueue.clear();
+        gameFlags.clear();
+    }
+
+    public void addFlag(GameFlag gameFlag){
+        this.gameFlags.add(gameFlag);
     }
 
     @Override

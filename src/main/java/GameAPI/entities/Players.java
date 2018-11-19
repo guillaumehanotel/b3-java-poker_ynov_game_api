@@ -64,8 +64,6 @@ public class Players extends ArrayList<Player> {
      * Modifie l'index de l'ordre de jeu des joueurs
      */
     public void setCurrentOrderIndex(Integer currentOrderIndex) {
-        log.info(String.valueOf(currentOrderIndex));
-        log.info(String.valueOf(this.size()));
         if (currentOrderIndex >= this.size()) {
             throw new RuntimeException("CurrentIndex too big");
         }
