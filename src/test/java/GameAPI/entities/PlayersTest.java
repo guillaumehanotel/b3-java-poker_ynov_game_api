@@ -28,9 +28,9 @@ class PlayersTest {
         new Card(Suit.CLUB, Rank.Ace)
     );
     Mockito.when(game.getLastCommunityCards()).thenReturn(cards);
-    players.add(new Player(new User("mail", "p1", "pass", 10000), 1000, game));
-    players.add(new Player(new User("mail", "p2", "pass", 10000), 1000, game));
-    players.add(new Player(new User("mail", "p3", "pass", 10000), 1000, game));
+    players.add(new Player(new User("mail", "p1", 10000), 1000, game));
+    players.add(new Player(new User("mail", "p2", 10000), 1000, game));
+    players.add(new Player(new User("mail", "p3", 10000), 1000, game));
   }
 
   @Test

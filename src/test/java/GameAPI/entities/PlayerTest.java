@@ -19,7 +19,7 @@ class PlayerTest {
     Game game = Mockito.mock(Game.class);
     Mockito.when(game.getLastCommunityCards()).thenReturn(Arrays.asList(new Card(Suit.DIAMOND, Rank.King), new Card(Suit.CLUB, Rank.Four)));
     Player player = new Player(
-        new User("1", "2", "3", 1000),
+        new User("1", "2", 1000),
         10000,
         game
     );
