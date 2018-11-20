@@ -10,7 +10,7 @@ import java.util.Comparator;
 
 public class Couleur extends Combination {
 
-  static final Integer value = Quinte.getNextValue();
+  private static final Integer value = Quinte.getNextValue();
   private final Suit suit;
   private final Rank rank;
 
@@ -24,7 +24,7 @@ public class Couleur extends Combination {
     this.rank = rank;
   }
 
-  Couleur(Cards cards) {
+  public Couleur(Cards cards) {
     super(value);
     Card bestCard = cards.stream()
         .filter(card -> cards.stream().filter(card1 -> card1.getSuit() == card.getSuit()).count() >= 5)

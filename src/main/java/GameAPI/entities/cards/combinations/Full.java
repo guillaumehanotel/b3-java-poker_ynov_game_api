@@ -8,7 +8,7 @@ import java.util.Comparator;
 
 public class Full extends Combination {
 
-  private static Integer value = Brelan.getNextValue();
+  private static Integer value = Couleur.getNextValue();
   private Rank doubleRank;
   private Rank tripletRank;
 

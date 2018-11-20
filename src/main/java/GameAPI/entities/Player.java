@@ -136,7 +136,19 @@ public class Player {
         } catch (CombinationNotPresentException ignored) {
         }
         try {
+            combinations.add(new Couleur(allCards));
+        } catch (CombinationNotPresentException ignored) {
+        }
+        try {
+            combinations.add(new FourOfAKind(allCards));
+        } catch (CombinationNotPresentException ignored) {
+        }
+        try {
             combinations.add(new Full(allCards));
+        } catch (CombinationNotPresentException ignored) {
+        }
+        try {
+            combinations.add(new FourOfAKind(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
         Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
