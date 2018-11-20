@@ -130,6 +130,10 @@ public class Player {
         } catch (CombinationNotPresentException ignored) {
         }
         try {
+            combinations.add(new Quinte(allCards));
+        } catch (CombinationNotPresentException ignored) {
+        }
+        try {
             combinations.add(new Full(allCards));
         } catch (CombinationNotPresentException ignored) {
         }

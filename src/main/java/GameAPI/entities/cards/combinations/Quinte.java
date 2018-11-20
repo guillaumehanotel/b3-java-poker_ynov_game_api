@@ -3,6 +3,7 @@ package GameAPI.entities.cards.combinations;
 import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
+import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,25 +25,32 @@ public class Quinte extends Combination {
   }
 
   public Quinte(Cards cards) {
-    // todo ace as first card
     super(value);
-    List<Card> collect = cards.stream()
-        .sorted(Collections.reverseOrder(Comparator.comparingInt(card -> card.getRank().getValue())))
+    List<Rank> collect = cards.stream()
+        .map(Card::getRank)
+        .sorted(Collections.reverseOrder(Comparator.comparingInt(Rank::getValue)))
+        .distinct()
         .collect(Collectors.toList());
-    Rank potentialRank = collect.get(0).getRank();
+    Rank potentialRank = collect.get(0);
     int nbrCorrect = 1;
     for (int i = 1; i < collect.size(); i++) {
-      if (collect.get(i-1).getRank().getValue() - collect.get(i).getRank().getValue() != 1) {
-        potentialRank = collect.get(i).getRank();
+      Rank rank1 = collect.get(i - 1);
+      Rank rank2 = collect.get(i);
+      boolean areSequentials = rank1.getValue() - rank2.getValue() == 1;
+      boolean twoAndAce = rank2 == Rank.Two && collect.get(0) == Rank.Ace;
+      if (areSequentials || twoAndAce) {
+        if (twoAndAce) nbrCorrect++;
+        nbrCorrect += 1;
+      } else {
+        potentialRank = rank2;
         nbrCorrect = 1;
-      } else nbrCorrect += 1;
+      }
       if (nbrCorrect == 5) {
         lastRank = potentialRank;
         return;
       }
     }
-    // todo combinationnotpresentexception
-    throw new RuntimeException("No Quinte");
+    throw new CombinationNotPresentException("No Quinte");
   }
 
   @Override
