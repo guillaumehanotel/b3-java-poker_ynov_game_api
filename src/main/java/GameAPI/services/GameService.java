@@ -17,8 +17,7 @@ public class GameService {
     @Autowired
     UserService userService;
 
-    public Game makeUserJoinAGame(Long id){
-        User user = userService.getOneById(id);
+    public Game makeUserJoinAGame(User user){
         return gameSystem.userAskForGame(user);
     }
 

@@ -6,9 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Classe Controller qui a pour but de recevoir les actions qui viennent du front
  * et d'éxecuter l'action passé dans le body en vérifiant que :
@@ -25,9 +22,15 @@ public class GameController {
     /**
      * Un user demande à rejoindre une partie
      */
-    @RequestMapping(value = "/users/{id}/join", method = RequestMethod.GET)
-    @ResponseBody Game userJoinGame(@PathVariable Long id) {
-        return gameService.makeUserJoinAGame(id);
+    @RequestMapping(value = "/users/join", method = RequestMethod.POST)
+    @ResponseBody Game userJoinGame(@RequestBody User user) throws InterruptedException {
+        Game game = gameService.makeUserJoinAGame(user);
+        game.resetRequest();
+        if(game.getGameStatus() == GameStatus.IN_PROGRESS){
+            return game.joinQueue.take();
+        } else {
+            return game;
+        }
     }
 
     /**
@@ -45,7 +48,7 @@ public class GameController {
 
         if (checkAction(action)) {
 
-            log.info("ACTION RECEIVED : " + action.toString());
+            log.info("[ACTION RECEIVED : " + action.toString() + "]");
 
             Integer gameId = action.getGameId();
             Long userId = action.getUserId().longValue();
@@ -53,6 +56,8 @@ public class GameController {
             try {
                 User user = gameService.getUserService().getOneById(userId);
                 game = gameService.getGameSystem().getGameById(gameId);
+                game.resetRequest();
+
                 if (checkGameActionGuard(game, user)) {
                     game.getActionManager().saveAction(action);
                 }
@@ -61,11 +66,11 @@ public class GameController {
                 log.error(e.getMessage());
             }
         }
-        return game != null ? game.pipe.take() : null;
+        return game != null ? game.actionQueue.take() : null;
     }
 
     /**
-     * Vérifie qu'une action reçue possède bien les champs requis
+     * Vérifie joinQueue'une action reçue possède bien les champs requis
      */
     private boolean checkAction(Action action) {
         boolean check = true;
@@ -87,7 +92,7 @@ public class GameController {
     }
 
     /**
-     * Vérifie qu'une action possède bien une valeur dans le cas où l'action serait BET ou RAISE
+     * Vérifie joinQueue'une action possède bien une valeur dans le cas où l'action serait BET ou RAISE
      */
     private boolean checkActionTypeParameter(Action action) {
         boolean check = true;

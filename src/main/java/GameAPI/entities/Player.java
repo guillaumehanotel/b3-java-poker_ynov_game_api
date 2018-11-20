@@ -16,6 +16,7 @@ import java.util.List;
 public class Player {
 
     private User user;
+    @JsonIgnore
     private Game game;
     private Integer chips;
     private Boolean isEliminated;
@@ -110,6 +111,7 @@ public class Player {
         return bestCombination.compares(playerBestCombination);
     }
 
+    @JsonIgnore
     public Combination getBestCombination() {
         List<Combination> combinations = new ArrayList<>();
         Cards allCards = getAllCards();
@@ -142,6 +144,7 @@ public class Player {
         this._combination = bestCombination;
         return bestCombination;
     }
+
 
     private Cards getAllCards() {
         Cards allCards = new Cards();
