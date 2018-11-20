@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Data
-public class Game {
+public class    Game {
 
     private static final Integer STARTING_CHIPS = 2000;
     private static final Integer NB_PLAYER_MAX = 4;
