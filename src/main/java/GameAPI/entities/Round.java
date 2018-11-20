@@ -84,6 +84,7 @@ public class Round {
         game.addFlag(GameFlag.NEW_TURN);
         initTurn();
         game.getActionGuard().expectActionFrom(players.getPlayingPlayer());
+        game.setPlayingPlayerId(players.getPlayingPlayer().getUser().getId());
 
         try {
             game.joinQueue.put(game);

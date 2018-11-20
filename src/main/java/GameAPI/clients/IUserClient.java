@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@FeignClient(name = "UserClient", url = "http://localhost:8080/users")
+@FeignClient(name = "UserClient", url = "http://localhost:1337/user")
 public interface IUserClient {
 
     @RequestLine("GET /")

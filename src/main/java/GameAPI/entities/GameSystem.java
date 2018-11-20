@@ -33,9 +33,9 @@ public class GameSystem {
     public Game userAskForGame(User user) {
         Game game = this.findGameForUser();
         try {
-            user.joinGame(game);
+            game.addPlayer(user);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return game;
     }

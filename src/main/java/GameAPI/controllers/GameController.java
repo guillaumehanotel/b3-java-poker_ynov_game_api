@@ -25,7 +25,7 @@ public class GameController {
     @RequestMapping(value = "/users/join", method = RequestMethod.POST)
     @ResponseBody Game userJoinGame(@RequestBody User user) throws InterruptedException {
         Game game = gameService.makeUserJoinAGame(user);
-        game.resetRequest();
+        game.resetFlagAndQueue();
         if(game.getGameStatus() == GameStatus.IN_PROGRESS){
             return game.joinQueue.take();
         } else {
@@ -54,9 +54,9 @@ public class GameController {
             Long userId = action.getUserId().longValue();
 
             try {
-                User user = gameService.getUserService().getOneById(userId);
                 game = gameService.getGameSystem().getGameById(gameId);
-                game.resetRequest();
+                User user = game.getUserById(action.getUserId().longValue());
+                game.resetFlagAndQueue();
 
                 if (checkGameActionGuard(game, user)) {
                     game.getActionManager().saveAction(action);

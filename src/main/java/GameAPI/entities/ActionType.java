@@ -4,7 +4,6 @@ public enum ActionType {
     FOLD,
     CALL,
     RAISE,
-    CHECK,
     BET,
     ALL_IN
 

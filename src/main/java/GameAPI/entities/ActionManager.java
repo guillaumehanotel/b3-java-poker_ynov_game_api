@@ -34,9 +34,7 @@ public class ActionManager {
             actionMap.put(ActionType.FOLD, Player.class.getMethod("fold"));
             actionMap.put(ActionType.CALL, Player.class.getMethod("call", Integer.class));
             actionMap.put(ActionType.RAISE, Player.class.getMethod("raise", Integer.class));
-            actionMap.put(ActionType.CHECK, Player.class.getMethod("check"));
             actionMap.put(ActionType.BET, Player.class.getMethod("bets", Integer.class));
-            actionMap.put(ActionType.ALL_IN, Player.class.getMethod("allIn"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -79,6 +77,7 @@ public class ActionManager {
 
             // Une fois qu'un player a joué, on met une protection pour le prochain player
             game.getActionGuard().expectActionFrom(round.getPlayers().getNextPlayingPlayer());
+            game.setPlayingPlayerId(round.getPlayers().getPlayingPlayer().getUser().getId());
 
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error(e.getMessage());
