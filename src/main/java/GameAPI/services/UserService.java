@@ -23,7 +23,7 @@ public class UserService {
             .decoder(new GsonDecoder())
             .logger(new Slf4jLogger(String.class))
             .logLevel(Logger.Level.FULL)
-            .target(IUserClient.class, "http://localhost:8080/users");
+            .target(IUserClient.class, "http://localhost:1337/user");
 
     public User getOneById(Long id){
         return iUserClient.getOneById(id);

@@ -86,16 +86,6 @@ public class Player {
     }
     // TODO : renvoyer les minimum raise amount pour l'interface
 
-    public void check() {
-        log.info(this.user.getUsername() + " check");
-        this.hasPlayTurn = true;
-    }
-
-    public void allIn() {
-        log.info(this.user.getUsername() + " allin");
-        this.hasPlayTurn = true;
-        bets(chips - currentBet);
-    }
 
     @Override
     public String toString() {

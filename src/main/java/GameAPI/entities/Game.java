@@ -37,6 +37,8 @@ public class    Game {
     public BlockingQueue<Game> joinQueue = new LinkedBlockingQueue<>();
     @JsonIgnore
     public BlockingQueue<Game> actionQueue = new LinkedBlockingQueue<>();
+    private Long playingPlayerId;
+
 
 
     public Game() {
@@ -51,6 +53,7 @@ public class    Game {
         this.bigBlind = this.startingChips / 100;
         this.smallBlind = this.bigBlind / 2;
         this.rounds = new ArrayList<>();
+        this.playingPlayerId = null;
     }
 
     private void incrementGameId() {
@@ -102,10 +105,20 @@ public class    Game {
                 .collect(Collectors.toList());
     }
 
-    public void resetRequest(){
+    public void resetFlagAndQueue(){
         this.actionQueue.clear();
         this.joinQueue.clear();
         gameFlags.clear();
+    }
+
+    public User getUserById(Long userId){
+        List<User> resultUserList = this.players.stream()
+                .map(Player::getUser)
+                .filter(user -> user.getId().equals(userId))
+                .collect(Collectors.toList());
+        if (resultUserList.size() != 1)
+            throw new IllegalStateException("No user found for this game or too much user found");
+        return resultUserList.get(0);
     }
 
     public void addFlag(GameFlag gameFlag){
