@@ -47,7 +47,7 @@ Proceed an action and returns game after action process.
 | 500 | Internal server error |
 
 
-### /game/1/users/1/cards
+### /game/{gameId}/users/{userId}/cards
 
 ---
 ##### ***GET***
