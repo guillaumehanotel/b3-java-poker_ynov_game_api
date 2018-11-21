@@ -118,18 +118,18 @@ public class Round {
 
     public void setupPreFlop() {
         log.info("[TURN] PREFLOP");
-        players.setCurrentOrderIndex(game.getDealerPosition() + 3);
+        players.setCurrentOrderIndex((game.getDealerPosition() + 3) % Game.NB_PLAYER_MAX);
     }
 
     public void setupFlop() {
         log.info("[TURN] FLOP");
-        players.setCurrentOrderIndex(game.getDealerPosition() + 1);
+        players.setCurrentOrderIndex((game.getDealerPosition() + 1) % Game.NB_PLAYER_MAX);
         communityCards.addAll(deck.drawCards(3));
     }
 
     public void setupTurn() {
         log.info("[TURN] TURN");
-        players.setCurrentOrderIndex(game.getDealerPosition() + 1);
+        players.setCurrentOrderIndex((game.getDealerPosition() + 1) % Game.NB_PLAYER_MAX);
         communityCards.addAll(deck.drawCards(1));
     }
 
