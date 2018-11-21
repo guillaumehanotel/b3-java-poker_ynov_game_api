@@ -149,13 +149,13 @@ public class Round {
         playersByResult.get(PlayerStatus.LOOSER).forEach(Player::loose);
     }
 
+    private boolean turnNotFinish() {
+        return turnNotFinishCondition() && game.getActionManager().checkPlayerAction(this);
+    }
+
     /**
      * Le tour n'est pas fini tant que les 2 conditions ne sont pas remplis
      */
-    private boolean turnNotFinish() {
-        return (!haveAllPlayersPlayed() || !haveAllPlayersEqualBet()) && game.getActionManager().checkPlayerAction(this);
-    }
-
     public boolean turnNotFinishCondition(){
         return (!haveAllPlayersPlayed() || !haveAllPlayersEqualBet());
     }
@@ -165,7 +165,7 @@ public class Round {
      */
     private boolean haveAllPlayersPlayed() {
         List<Player> playersStillPlaying =  players.stream()
-                .filter(playerRound -> !playerRound.getHasDropped())
+                .filter(player -> !player.isIgnoredForRound())
                 .collect(Collectors.toList());
         // todo replace by stream method
         for (Player player : playersStillPlaying){
@@ -181,7 +181,7 @@ public class Round {
      */
     private boolean haveAllPlayersEqualBet() {
         return players.stream()
-                .filter(player -> !player.getHasDropped())
+                .filter(player -> !player.isIgnoredForRound())
                 .map(Player::getCurrentBet)
                 .allMatch(bet -> bet.equals(players.get(0).getCurrentBet()));
     }

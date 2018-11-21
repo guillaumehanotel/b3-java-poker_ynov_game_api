@@ -33,7 +33,6 @@ public class ActionManager {
         try {
             actionMap.put(ActionType.FOLD, Player.class.getMethod("fold"));
             actionMap.put(ActionType.CALL, Player.class.getMethod("call", Integer.class));
-            actionMap.put(ActionType.RAISE, Player.class.getMethod("raise", Integer.class));
             actionMap.put(ActionType.BET, Player.class.getMethod("bets", Integer.class));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -41,7 +40,7 @@ public class ActionManager {
     }
 
     /**
-     * Quand une action est attendu, méthode appelé continuellement pour vérifier joinQueue'il y a une action à faire
+     * Quand une action est attendu, méthode appelé continuellement pour vérifier qu'il y a une action à faire
      */
     public boolean checkPlayerAction(Round round) {
         if (playerAction != null) {

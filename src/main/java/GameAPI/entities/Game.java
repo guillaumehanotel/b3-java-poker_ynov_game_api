@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Data
-public class    Game {
+public class Game {
 
     private static final Integer STARTING_CHIPS = 2000;
     private static final Integer NB_PLAYER_MAX = 4;
@@ -37,8 +37,7 @@ public class    Game {
     public BlockingQueue<Game> joinQueue = new LinkedBlockingQueue<>();
     @JsonIgnore
     public BlockingQueue<Game> actionQueue = new LinkedBlockingQueue<>();
-    private Long playingPlayerId;
-
+    private Integer playingPlayerId;
 
 
     public Game() {
@@ -105,23 +104,26 @@ public class    Game {
                 .collect(Collectors.toList());
     }
 
-    public void resetFlagAndQueue(){
+    public void resetFlagAndQueue() {
         this.actionQueue.clear();
         this.joinQueue.clear();
         gameFlags.clear();
     }
 
-    public User getUserById(Long userId){
-        List<User> resultUserList = this.players.stream()
-                .map(Player::getUser)
-                .filter(user -> user.getId().equals(userId))
+    public User getUserById(Integer userId) {
+        return getPlayerByUserId(userId).getUser();
+    }
+
+    public Player getPlayerByUserId(Integer userId){
+        List<Player> resultUserList = this.players.stream()
+                .filter(player -> player.getUser().getId().equals(userId))
                 .collect(Collectors.toList());
         if (resultUserList.size() != 1)
             throw new IllegalStateException("No user found for this game or too much user found");
         return resultUserList.get(0);
     }
 
-    public void addFlag(GameFlag gameFlag){
+    public void addFlag(GameFlag gameFlag) {
         this.gameFlags.add(gameFlag);
     }
 
@@ -133,6 +135,6 @@ public class    Game {
     }
 
     List<Card> getLastCommunityCards() {
-      return rounds.get(rounds.size() - 1).getCommunityCards();
+        return rounds.get(rounds.size() - 1).getCommunityCards();
     }
 }

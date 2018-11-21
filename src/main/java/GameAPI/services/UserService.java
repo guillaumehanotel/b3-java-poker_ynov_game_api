@@ -25,7 +25,7 @@ public class UserService {
             .logLevel(Logger.Level.FULL)
             .target(IUserClient.class, "http://localhost:1337/user");
 
-    public User getOneById(Long id){
+    public User getOneById(Integer id){
         return iUserClient.getOneById(id);
     }
 

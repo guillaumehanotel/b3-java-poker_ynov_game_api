@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class User {
 
-    private Long id;
+    private Integer id;
     private String email;
     private String username;
     private Integer money;

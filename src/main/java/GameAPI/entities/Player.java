@@ -78,14 +78,19 @@ public class Player {
         this.hasPlayTurn = true;
     }
 
-    public void raise(Integer amount) {
-        log.info(this.user.getUsername() + " raise " + amount);
-        bets(amount);
-        this.hasPlayTurn = true;
-
+    public boolean hasAllIn(){
+        return currentBet.equals(chips);
     }
-    // TODO : renvoyer les minimum raise amount pour l'interface
 
+    /**
+     * Un joueur est considéré comme ignoré pour une manche si :
+     * - il est éliminé
+     * - il s'est couché
+     * - il a misé tout ses jetons (all-in)
+     */
+    public boolean isIgnoredForRound(){
+        return hasAllIn() && isEliminated && hasDropped;
+    }
 
     @Override
     public String toString() {
@@ -147,7 +152,6 @@ public class Player {
         return bestCombination;
     }
 
-
     private Cards getAllCards() {
         Cards allCards = new Cards();
         allCards.addAll(downCards);
@@ -163,5 +167,8 @@ public class Player {
 
     void loose() {
         this.chips -= this.currentBet;
+        if(this.chips == 0){
+            this.isEliminated = true;
+        }
     }
 }

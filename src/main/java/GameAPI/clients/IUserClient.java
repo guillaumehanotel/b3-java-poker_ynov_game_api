@@ -16,6 +16,6 @@ public interface IUserClient {
     List<User> getAll();
 
     @RequestLine("GET /{id}")
-    User getOneById(@Param("id") Long id);
+    User getOneById(@Param("id") Integer id);
 
 }

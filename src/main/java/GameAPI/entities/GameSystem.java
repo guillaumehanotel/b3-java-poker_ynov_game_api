@@ -44,7 +44,7 @@ public class GameSystem {
      * Fonction chargée de trouver une partie pour un joueur
      *
      * Si aucune partie n'est lancée, on en crée une et on l'ajoute à la liste global des parties
-     * Si il existe des parties, mais joinQueue'aucune n'est en attente, alors idem, on crée
+     * Si il existe des parties, mais que'aucune n'est en attente, alors idem, on crée
      * Sinon, on va chercher la première partie de la liste des parties en attente
      */
     private Game findGameForUser() {

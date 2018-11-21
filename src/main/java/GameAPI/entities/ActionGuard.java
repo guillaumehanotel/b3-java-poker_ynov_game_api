@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ActionGuard {
 
     private Boolean actionExpected;
-    private Long userId;
+    private Integer userId;
 
     public ActionGuard(){
         this.actionExpected = false;
@@ -33,7 +33,7 @@ public class ActionGuard {
     }
 
     public void expectActionFrom(Player player){
-        Long userId = player.getUser().getId();
+        Integer userId = player.getUser().getId();
         this.actionExpected = true;
         this.userId = userId;
         log.info("[EXPECT ACTION FROM USER n°" + userId + "]");

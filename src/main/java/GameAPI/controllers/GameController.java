@@ -1,10 +1,13 @@
 package GameAPI.controllers;
 
 import GameAPI.entities.*;
+import GameAPI.entities.cards.Card;
 import GameAPI.services.GameService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Classe Controller qui a pour but de recevoir les actions qui viennent du front
@@ -51,11 +54,10 @@ public class GameController {
             log.info("[ACTION RECEIVED : " + action.toString() + "]");
 
             Integer gameId = action.getGameId();
-            Long userId = action.getUserId().longValue();
 
             try {
                 game = gameService.getGameSystem().getGameById(gameId);
-                User user = game.getUserById(action.getUserId().longValue());
+                User user = game.getUserById(action.getUserId());
                 game.resetFlagAndQueue();
 
                 if (checkGameActionGuard(game, user)) {
@@ -69,8 +71,14 @@ public class GameController {
         return game != null ? game.actionQueue.take() : null;
     }
 
+    @RequestMapping(value = "/game/{gameId}/users/{userId}/cards", method = RequestMethod.GET)
+    List<Card> getUserCards(@PathVariable Integer gameId, @PathVariable Integer userId){
+        Game game = gameService.getGameSystem().getGameById(gameId);
+        return game.getPlayerByUserId(userId).getDownCards();
+    }
+
     /**
-     * Vérifie joinQueue'une action reçue possède bien les champs requis
+     * Vérifie que'une action reçue possède bien les champs requis
      */
     private boolean checkAction(Action action) {
         boolean check = true;
@@ -92,14 +100,14 @@ public class GameController {
     }
 
     /**
-     * Vérifie joinQueue'une action possède bien une valeur dans le cas où l'action serait BET ou RAISE
+     * Vérifie que'une action possède bien une valeur dans le cas où l'action serait BET
      */
     private boolean checkActionTypeParameter(Action action) {
         boolean check = true;
-        if(action.getActionType() == ActionType.BET || action.getActionType() == ActionType.RAISE){
+        if(action.getActionType() == ActionType.BET){
             if(action.getValue() == null){
                 check = false;
-                log.error("Missing value for action BET or RAISE");
+                log.error("Missing value for action BET");
             }
         }
         return check;
