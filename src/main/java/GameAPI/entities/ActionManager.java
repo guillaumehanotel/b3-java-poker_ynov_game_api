@@ -42,7 +42,7 @@ public class ActionManager {
     /**
      * Quand une action est attendu, méthode appelé continuellement pour vérifier qu'il y a une action à faire
      */
-    public boolean checkPlayerAction(Round round) {
+    public Boolean playActionIfExist(Round round) {
         if (playerAction != null) {
             this.playAction(round);
         }
@@ -53,36 +53,45 @@ public class ActionManager {
      * Execution de la méthode provenant d'une requete
      */
     private void playAction(Round round) {
+
+        executeAction(round);
+        this.resetAction();
+
+        // on peut enregistrer le jeu actuel dans la actionQueue après l'action jouée pour pouvoir retourner le nouvel état du jeu dans la réponse de la requête
+        if (round.turnNotFinishCondition()) {
+            log.info("coucou");
+            try {
+                game.actionQueue.put(game);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        // Une fois qu'un player a joué, on met une protection pour le prochain player
+        game.getActionGuard().expectActionFrom(round.getPlayers().getNextPlayingPlayer());
+        game.setPlayingPlayerId(round.getPlayers().getPlayingPlayer().getUser().getId());
+
+    }
+
+    public void executeAction(Round round){
+
         Player player = round.getPlayers().getPlayingPlayer();
+
         try {
-            if(actionParameter != null){
+            if (actionParameter != null) {
                 playerAction.invoke(player, actionParameter);
             } else {
-                if(playerAction.getName().equals("call")){
+                if (playerAction.getName().equals("call")) {
                     playerAction.invoke(player, round.getBiggestBet());
                 } else {
                     playerAction.invoke(player);
                 }
             }
-
-            // on peut enregistrer le jeu actuel dans la actionQueue après l'action jouée pour pouvoir retourner le nouvel état du jeu dans la réponse de la requête
-            if(round.turnNotFinishCondition()) {
-                try {
-                    game.actionQueue.put(game);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Une fois qu'un player a joué, on met une protection pour le prochain player
-            game.getActionGuard().expectActionFrom(round.getPlayers().getNextPlayingPlayer());
-            game.setPlayingPlayerId(round.getPlayers().getPlayingPlayer().getUser().getId());
-
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
-        this.resetAction();
     }
 
     /**

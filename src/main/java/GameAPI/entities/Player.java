@@ -23,6 +23,7 @@ public class Player {
     private Boolean hasDropped;
     private Integer currentBet;
     private Boolean hasPlayTurn;
+    @JsonIgnore
     private List<Card> downCards;
     private Combination combination;
     private Integer earnedMoney;
@@ -63,6 +64,7 @@ public class Player {
     public void bets(Integer amount) {
         log.info(this.user.getUsername() + " bets " + amount);
         this.currentBet = this.currentBet + amount;
+        game.setPot(game.getPot() + amount);
         this.hasPlayTurn = true;
     }
 
@@ -78,7 +80,7 @@ public class Player {
         this.hasPlayTurn = true;
     }
 
-    public boolean hasAllIn(){
+    public Boolean hasAllIn(){
         return currentBet.equals(chips);
     }
 
@@ -88,7 +90,8 @@ public class Player {
      * - il s'est couché
      * - il a misé tout ses jetons (all-in)
      */
-    public boolean isIgnoredForRound(){
+    @JsonIgnore
+    public Boolean isIgnoredForRound(){
         return hasAllIn() && isEliminated && hasDropped;
     }
 

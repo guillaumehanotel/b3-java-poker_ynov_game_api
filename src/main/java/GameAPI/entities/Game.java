@@ -38,6 +38,7 @@ public class Game {
     @JsonIgnore
     public BlockingQueue<Game> actionQueue = new LinkedBlockingQueue<>();
     private Integer playingPlayerId;
+    private Integer pot;
 
 
     public Game() {
@@ -53,6 +54,7 @@ public class Game {
         this.smallBlind = this.bigBlind / 2;
         this.rounds = new ArrayList<>();
         this.playingPlayerId = null;
+        this.pot = 0;
     }
 
     private void incrementGameId() {
@@ -70,7 +72,7 @@ public class Game {
         }
     }
 
-    private boolean checkIfUserIsAlreadyInGame(User user) {
+    private Boolean checkIfUserIsAlreadyInGame(User user) {
         return players.stream().map(Player::getUser).anyMatch(user1 -> user1.equals(user));
     }
 
@@ -85,6 +87,7 @@ public class Game {
         log.info("[GAME " + id + "] START");
         this.gameFlags.add(GameFlag.GAME_STARTED);
         while (!gameHasWinner()) {
+            this.setPot(0);
             Round round = new Round(this);
             this.rounds.add(round);
             round.start();
@@ -93,7 +96,7 @@ public class Game {
         this.gameStatus = GameStatus.FINISHED;
     }
 
-    private boolean gameHasWinner() {
+    private Boolean gameHasWinner() {
         return getNonEliminatedPlayers().size() == 1;
     }
 

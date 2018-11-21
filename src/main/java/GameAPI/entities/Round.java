@@ -106,6 +106,11 @@ public class Round {
     }
 
     public void initTurn() {
+        setupTurnByPhase();
+        players.forEach(Player::resetTurn);
+    }
+
+    public void setupTurnByPhase() {
         TurnBehavior turnBehavior = TurnBehavior.getInstance();
         Method turnInitMethod = turnBehavior.getInitMethodByTurnPhase(currentTurnPhase);
         try {
@@ -113,7 +118,6 @@ public class Round {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        players.forEach(Player::resetTurn);
     }
 
     public void setupPreFlop() {
@@ -149,27 +153,28 @@ public class Round {
         playersByResult.get(PlayerStatus.LOOSER).forEach(Player::loose);
     }
 
-    private boolean turnNotFinish() {
-        return turnNotFinishCondition() && game.getActionManager().checkPlayerAction(this);
+    private Boolean turnNotFinish() {
+        return turnNotFinishCondition() && game.getActionManager().playActionIfExist(this);
     }
 
     /**
      * Le tour n'est pas fini tant que les 2 conditions ne sont pas remplis
+     * tour fini
      */
-    public boolean turnNotFinishCondition(){
+    public Boolean turnNotFinishCondition() {
         return (!haveAllPlayersPlayed() || !haveAllPlayersEqualBet());
     }
 
     /**
      * Est-ce que tous les joueurs qui ne se sont pas couchés ont joué ?
      */
-    private boolean haveAllPlayersPlayed() {
-        List<Player> playersStillPlaying =  players.stream()
+    private Boolean haveAllPlayersPlayed() {
+        List<Player> playersStillPlaying = players.stream()
                 .filter(player -> !player.isIgnoredForRound())
                 .collect(Collectors.toList());
         // todo replace by stream method
-        for (Player player : playersStillPlaying){
-            if (!player.getHasPlayTurn()){
+        for (Player player : playersStillPlaying) {
+            if (!player.getHasPlayTurn()) {
                 return false;
             }
         }
@@ -179,7 +184,7 @@ public class Round {
     /**
      * Est-ce que tous les joueurs qui ne se sont pas couchés ont des mises égales ?
      */
-    private boolean haveAllPlayersEqualBet() {
+    private Boolean haveAllPlayersEqualBet() {
         return players.stream()
                 .filter(player -> !player.isIgnoredForRound())
                 .map(Player::getCurrentBet)
