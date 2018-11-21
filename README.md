@@ -35,7 +35,7 @@ Proceed an action and returns game after action process.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | gameId | body | Game Id | Yes | number |
-| userId | body | User Id | Yes | string |
+| userId | body | User Id | Yes | number |
 | actionType | body | Action played (CALL|FOLD|BET) | Yes | string |
 | value | body | money bet only if actionType = "BET"  | No | number |
 
@@ -57,7 +57,7 @@ Returns the downcards of the user for a game.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | gameId | path | Game Id | Yes | number |
-| userId | path | User Id | Yes | string |
+| userId | path | User Id | Yes | number |
 
 **Responses**
 
