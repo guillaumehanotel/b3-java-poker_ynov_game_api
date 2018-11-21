@@ -135,7 +135,7 @@ public class Round {
 
     public void setupRiver() {
         log.info("[TURN] RIVER");
-        players.setCurrentOrderIndex(game.getDealerPosition() + 1);
+        players.setCurrentOrderIndex((game.getDealerPosition() + 1) % Game.NB_PLAYER_MAX);
         communityCards.addAll(deck.drawCards(1));
     }
 
