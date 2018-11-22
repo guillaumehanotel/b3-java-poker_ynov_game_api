@@ -33,18 +33,11 @@ public class Round {
         this.currentTurnPhase = TurnPhase.PREFLOP;
     }
 
-
     public void start() {
         log.info("[ROUND] START");
         game.addFlag(GameFlag.NEW_ROUND);
         initRound();
-        int i = 0;
-        int nbPhase = TurnPhase.values().length;
-        while (i != nbPhase) {
-            this.startTurn();
-            this.currentTurnPhase = this.currentTurnPhase.getNextPhase();
-            i++;
-        }
+        playTurns();
         showDown();
         log.info("[ROUND] FINISHED");
     }
@@ -73,6 +66,18 @@ public class Round {
         }
     }
 
+    private void playTurns() {
+        int i = 0;
+        int nbPhase = TurnPhase.values().length;
+
+        this.startTurn();
+        while (i != nbPhase - 1) {
+            this.currentTurnPhase = this.currentTurnPhase.getNextPhase();
+            this.startTurn();
+            i++;
+        }
+    }
+
     /**
      * Lancement d'un tour de mise en admettant que les cartes aient été distribuées et que les blinds ont été misées
      * Un tour de mise continue tant que :
@@ -84,14 +89,13 @@ public class Round {
         game.addFlag(GameFlag.NEW_TURN);
         initTurn();
         game.getActionGuard().expectActionFrom(players.getPlayingPlayer());
-        game.setPlayingPlayerId(players.getPlayingPlayer().getUser().getId());
-
+        game.updatePlayingPlayerData(this);
         try {
             game.joinQueue.put(game);
-            game.actionQueue.put(game);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        if (turnNotFinishCondition()) game.save();
 
         while (turnNotFinish()) {
             try {
@@ -145,6 +149,7 @@ public class Round {
 
     private void showDown() {
         log.info("[TURN] SHOWDOWN");
+        game.addFlag(GameFlag.SHOWDOWN);
         HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult();
         Integer pot = players.stream().mapToInt(Player::getCurrentBet).sum();
         List<Player> winners = playersByResult.get(PlayerStatus.WINNER);
@@ -159,10 +164,13 @@ public class Round {
 
     /**
      * Le tour n'est pas fini tant que les 2 conditions ne sont pas remplis
-     * tour fini
      */
     public Boolean turnNotFinishCondition() {
-        return (!haveAllPlayersPlayed() || !haveAllPlayersEqualBet());
+        if (isThereOnePlayingPlayerInRound()) {
+            return false;
+        } else {
+            return (!haveAllPlayersPlayed() || !haveAllPlayersEqualBet());
+        }
     }
 
     /**
@@ -189,6 +197,16 @@ public class Round {
                 .filter(player -> !player.isIgnoredForRound())
                 .map(Player::getCurrentBet)
                 .allMatch(bet -> bet.equals(players.get(0).getCurrentBet()));
+    }
+
+    /**
+     * Vérifie si il ne reste qu'un joueur restant dans une manche
+     */
+    private Boolean isThereOnePlayingPlayerInRound() {
+        // on compte tous les joueurs s'étant couché, si NB = NB_JOUEUR - 1
+        return this.players.stream()
+                .filter(Player::getHasDropped)
+                .count() == Game.NB_PLAYER_MAX - 1;
     }
 
     Integer getBiggestBet() {

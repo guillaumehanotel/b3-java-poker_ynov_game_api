@@ -57,9 +57,9 @@ public class ActionManager {
         executeAction(round);
         this.resetAction();
 
-        // on peut enregistrer le jeu actuel dans la actionQueue après l'action jouée pour pouvoir retourner le nouvel état du jeu dans la réponse de la requête
+        // si le tour n'est pas fini après l'action du joueur,
+        // on peut enregistrer le jeu actuel dans la actionQueue
         if (round.turnNotFinishCondition()) {
-            log.info("coucou");
             try {
                 game.actionQueue.put(game);
             } catch (InterruptedException e) {
@@ -70,7 +70,8 @@ public class ActionManager {
 
         // Une fois qu'un player a joué, on met une protection pour le prochain player
         game.getActionGuard().expectActionFrom(round.getPlayers().getNextPlayingPlayer());
-        game.setPlayingPlayerId(round.getPlayers().getPlayingPlayer().getUser().getId());
+
+        game.updatePlayingPlayerData(round);
 
     }
 

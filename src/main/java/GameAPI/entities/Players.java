@@ -33,9 +33,6 @@ public class Players extends ArrayList<Player> {
         return player;
     }
 
-
-
-
     /**
      * Récupère le joueur suivant dans l'ordre des joueurs d'un jeu
      */

@@ -92,7 +92,11 @@ public class Player {
      */
     @JsonIgnore
     public Boolean isIgnoredForRound(){
-        return hasAllIn() && isEliminated && hasDropped;
+        if(!isEliminated){
+            return hasAllIn() || hasDropped;
+        } else {
+            return true;
+        }
     }
 
     @Override

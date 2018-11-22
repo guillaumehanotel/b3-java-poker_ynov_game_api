@@ -29,7 +29,7 @@ public class GameController {
     @ResponseBody
     Game userJoinGame(@RequestBody User user) throws InterruptedException {
         Game game = gameService.makeUserJoinAGame(user);
-        game.resetFlagAndQueue();
+        game.resetFlagAndQueueAndErrors();
         if (game.getGameStatus() == GameStatus.IN_PROGRESS) {
             return game.joinQueue.take();
         } else {
@@ -58,16 +58,17 @@ public class GameController {
                 log.info("[ACTION RECEIVED : " + action.toString() + "]");
 
                 User user = game.getUserById(action.getUserId());
-                game.resetFlagAndQueue();
+                game.resetFlagAndQueueAndErrors();
 
                 if (checkGameActionGuard(game, user)) {
                     game.getActionManager().saveAction(action);
                 } else {
+
                     game.actionQueue.put(game);
                 }
 
             } else {
-                log.error("INVALID ACTION");
+                game.addError("INVALID ACTION");
                 game.actionQueue.put(game);
             }
 
@@ -125,18 +126,18 @@ public class GameController {
      * si le user à l'origine de l'action est valide
      */
     private Boolean checkGameActionGuard(Game game, User user) {
-        ActionGuard actionGuard = game.getActionGuard();
-        return isActionExpected(actionGuard) && isUserValid(actionGuard, user);
+        return isActionExpected(game) && isUserValid(game, user);
     }
 
     /**
      * Vérifie que le user à l'origine de l'action est bien attendue
      */
-    private Boolean isUserValid(ActionGuard actionGuard, User user) {
+    private Boolean isUserValid(Game game, User user) {
+        ActionGuard actionGuard = game.getActionGuard();
         if (actionGuard.getUserId().equals(user.getId())) {
             return true;
         } else {
-            log.error("Action forbidden for User n°" + user.getId() + " : " + user.getUsername());
+            game.addError("Action forbidden for User n°" + user.getId() + " : " + user.getUsername());
             return false;
         }
     }
@@ -144,11 +145,12 @@ public class GameController {
     /**
      * Vérifie d'une action est attendue
      */
-    private Boolean isActionExpected(ActionGuard actionGuard) {
+    private Boolean isActionExpected(Game game) {
+        ActionGuard actionGuard = game.getActionGuard();
         if (actionGuard.getActionExpected()) {
             return true;
         } else {
-            log.error("The game doesn't wait an action");
+            game.addError("The game doesn't wait an action");
             return false;
         }
     }

@@ -4,6 +4,7 @@ public enum GameFlag {
 
     GAME_STARTED,
     NEW_ROUND,
-    NEW_TURN
+    NEW_TURN,
+    SHOWDOWN
 
 }

@@ -4,12 +4,14 @@ import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
 import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
+import lombok.Data;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
 public class Quinte extends Combination {
 
   private static final Integer value = Brelan.getNextValue();

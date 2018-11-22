@@ -38,7 +38,9 @@ public class Game {
     @JsonIgnore
     public BlockingQueue<Game> actionQueue = new LinkedBlockingQueue<>();
     private Integer playingPlayerId;
+    private Integer playingPlayerCallValue;
     private Integer pot;
+    private List<String> errors;
 
 
     public Game() {
@@ -54,7 +56,9 @@ public class Game {
         this.smallBlind = this.bigBlind / 2;
         this.rounds = new ArrayList<>();
         this.playingPlayerId = null;
+        this.playingPlayerCallValue = null;
         this.pot = 0;
+        this.errors = new ArrayList<>();
     }
 
     private void incrementGameId() {
@@ -107,7 +111,8 @@ public class Game {
                 .collect(Collectors.toList());
     }
 
-    public void resetFlagAndQueue() {
+    public void resetFlagAndQueueAndErrors() {
+        this.errors.clear();
         this.actionQueue.clear();
         this.joinQueue.clear();
         gameFlags.clear();
@@ -128,6 +133,29 @@ public class Game {
 
     public void addFlag(GameFlag gameFlag) {
         this.gameFlags.add(gameFlag);
+    }
+
+    public void resetFlags(){
+        this.gameFlags.clear();
+    }
+
+    public void addError(String error){
+        this.errors.add(error);
+        log.error(error);
+    }
+
+    public void updatePlayingPlayerData(Round round){
+        Player playingPlayer = round.getPlayers().getPlayingPlayer();
+        this.setPlayingPlayerId(playingPlayer.getUser().getId());
+        this.setPlayingPlayerCallValue(round.getBiggestBet() - playingPlayer.getCurrentBet());
+    }
+
+    public void save(){
+        try {
+            actionQueue.put(this);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

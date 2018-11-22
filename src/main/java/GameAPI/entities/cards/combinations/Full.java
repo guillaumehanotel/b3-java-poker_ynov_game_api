@@ -3,9 +3,11 @@ package GameAPI.entities.cards.combinations;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
 import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
+import lombok.Data;
 
 import java.util.Comparator;
 
+@Data
 public class Full extends Combination {
 
   private static Integer value = Couleur.getNextValue();

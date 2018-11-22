@@ -3,6 +3,7 @@ package GameAPI.entities.cards.combinations;
 import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
+import lombok.Data;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
 public class Hauteur extends Combination {
   private static Integer value = 0;
   private List<Rank> ranks;

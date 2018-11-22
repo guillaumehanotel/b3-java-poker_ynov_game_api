@@ -5,9 +5,11 @@ import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
 import GameAPI.entities.cards.Suit;
 import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
+import lombok.Data;
 
 import java.util.Comparator;
 
+@Data
 public class Couleur extends Combination {
 
   private static final Integer value = Quinte.getNextValue();

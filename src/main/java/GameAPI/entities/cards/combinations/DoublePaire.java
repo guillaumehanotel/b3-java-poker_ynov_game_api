@@ -4,11 +4,13 @@ import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
 import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
+import lombok.Data;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Data
 public class DoublePaire extends Combination {
 
   private static final Integer value = Paire.getNextValue();
