@@ -33,13 +33,7 @@ public class Paire extends Combination {
   @Override
   protected Integer comparesWithSame(Combination combination) {
     Paire paire = (Paire) combination;
-    if (rank.getValue() > paire.rank.getValue()) {
-      return 1;
-    } else if (rank.getValue() < paire.rank.getValue()) {
-      return -1;
-    } else {
-      return 0;
-    }
+    return rank.compares(paire.rank);
   }
 
   @Override

@@ -46,11 +46,8 @@ public class Hauteur extends Combination {
     Hauteur hauteur = (Hauteur) combination;
     if (ranks.size() != hauteur.ranks.size()) throw new RuntimeException("Can't compare hauteurs of different sizes");
     for (int i = 0; i < ranks.size(); i++) {
-      if (ranks.get(i).getValue() > hauteur.ranks.get(i).getValue()) {
-        return 1;
-      } else if (ranks.get(i).getValue() < hauteur.ranks.get(i).getValue()) {
-        return -1;
-      }
+      Integer compares = ranks.get(i).compares(hauteur.ranks.get(i));
+      if (compares != 0) return compares;
     }
     return 0;
   }

@@ -59,17 +59,9 @@ public class DoublePaire extends Combination {
   @Override
   protected Integer comparesWithSame(Combination combination) {
     DoublePaire doublePaire = (DoublePaire) combination;
-    if (ranks.get(0).getValue() > doublePaire.ranks.get(0).getValue()) {
-      return 1;
-    } else if (ranks.get(0).getValue() < doublePaire.ranks.get(0).getValue()) {
-      return -1;
-    } else if (ranks.get(1).getValue() > doublePaire.ranks.get(1).getValue()) {
-      return 1;
-    } else if (ranks.get(1).getValue() < doublePaire.ranks.get(1).getValue()) {
-      return -1;
-    } else {
-      return 0;
-    }
+    Integer compares = ranks.get(0).compares(doublePaire.ranks.get(0));
+    if (compares == 0) compares = ranks.get(1).compares(doublePaire.ranks.get(0));
+    return compares;
   }
 
   @Override

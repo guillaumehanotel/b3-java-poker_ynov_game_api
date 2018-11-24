@@ -34,9 +34,7 @@ public class Brelan extends Combination {
   @Override
   protected Integer comparesWithSame(Combination combination) {
     Brelan brelan = (Brelan) combination;
-    if (this.rank.getValue() > brelan.rank.getValue()) return 1;
-    else if (this.rank.getValue() < brelan.rank.getValue()) return -1;
-    return 0;
+    return rank.compares(brelan.rank);
   }
 
   @Override

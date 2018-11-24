@@ -40,15 +40,8 @@ public class Full extends Combination {
   @Override
   protected Integer comparesWithSame(Combination combination) {
     Full full = (Full) combination;
-    if (tripletRank.getValue() > full.tripletRank.getValue()) {
-      return 1;
-    } else if (tripletRank.getValue() < full.tripletRank.getValue()) {
-      return -1;
-    } else if (doubleRank.getValue() > full.doubleRank.getValue()) {
-      return 1;
-    } else if (doubleRank.getValue() < full.doubleRank.getValue()) {
-      return -1;
-    }
-    return 0;
+    Integer compares = tripletRank.compares(full.tripletRank);
+    if (compares == 0) compares = doubleRank.compares(full.doubleRank);
+    return compares;
   }
 }
