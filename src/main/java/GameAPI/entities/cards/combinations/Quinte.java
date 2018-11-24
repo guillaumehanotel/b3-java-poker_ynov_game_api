@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class Quinte extends Combination {
 
   private static final Integer value = Brelan.getNextValue();
-  private final Rank lastRank;
+  private final Rank bestRank;
 
   static Integer getNextValue() {
     return value + 1;
@@ -23,7 +23,7 @@ public class Quinte extends Combination {
 
   public Quinte(Rank lastRank) {
     super(value);
-    this.lastRank = lastRank;
+    this.bestRank = lastRank;
   }
 
   public Quinte(Cards cards) {
@@ -48,7 +48,7 @@ public class Quinte extends Combination {
         nbrCorrect = 1;
       }
       if (nbrCorrect == 5) {
-        lastRank = potentialRank;
+        bestRank = potentialRank;
         return;
       }
     }
@@ -58,11 +58,15 @@ public class Quinte extends Combination {
   @Override
   protected Integer comparesWithSame(Combination combination) {
     Quinte quinte = (Quinte) combination;
-    return this.lastRank.compares(quinte.lastRank);
+    return this.bestRank.compares(quinte.bestRank);
   }
 
   @Override
   public String toString() {
-    return "Quinte starting at " + lastRank;
+    return "Quinte starting at " + bestRank;
+  }
+
+  public Rank getBestRank() {
+    return bestRank;
   }
 }
