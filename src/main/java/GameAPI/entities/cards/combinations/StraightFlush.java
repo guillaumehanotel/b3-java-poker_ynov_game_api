@@ -4,9 +4,11 @@ import GameAPI.entities.cards.Card;
 import GameAPI.entities.cards.Cards;
 import GameAPI.entities.cards.Rank;
 import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentException;
+import lombok.Data;
 
 import java.util.stream.Collectors;
 
+@Data
 public class StraightFlush extends Combination {
 
   private static final Integer value = FourOfAKind.getNextValue();
@@ -21,7 +23,7 @@ public class StraightFlush extends Combination {
     this.bestRank = bestRank;
   }
 
-  StraightFlush(Cards cards) {
+  public StraightFlush(Cards cards) {
     super(value);
     // Keep cards whose suit is present at least 5 times
     Cards fiveTimesSuitCards = new Cards();
@@ -31,9 +33,13 @@ public class StraightFlush extends Combination {
     try {
       Quinte bestQuinte = new Quinte(fiveTimesSuitCards);
       bestRank = bestQuinte.getBestRank();
-    } catch (CombinationNotPresentException e) {
+    } catch (CombinationNotPresentException | IndexOutOfBoundsException e) {
       throw new CombinationNotPresentException("No straight flush");
     }
+  }
+
+  public Rank getBestRank() {
+    return bestRank;
   }
 
   @Override

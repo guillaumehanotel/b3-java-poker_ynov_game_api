@@ -153,6 +153,14 @@ public class Player {
             combinations.add(new FourOfAKind(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
+        try {
+            combinations.add(new StraightFlush(allCards));
+        } catch (CombinationNotPresentException ignored) {
+        }
+        try {
+            combinations.add(new RoyalFlush(allCards));
+        } catch (CombinationNotPresentException ignored) {
+        }
         Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
         System.out.println(toString() + " : " + bestCombination);
         this._combination = bestCombination;

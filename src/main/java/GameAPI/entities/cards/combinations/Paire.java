@@ -6,7 +6,6 @@ import GameAPI.entities.cards.combinations.exceptions.CombinationNotPresentExcep
 import lombok.Data;
 
 import java.util.Comparator;
-import java.util.Objects;
 
 @Data
 public class Paire extends Combination {
@@ -48,8 +47,4 @@ public class Paire extends Combination {
     return "Paire of " + rank;
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(rank);
-  }
 }
