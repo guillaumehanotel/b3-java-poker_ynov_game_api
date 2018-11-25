@@ -199,6 +199,7 @@ public class Player {
     }
 
     public void savePreviousDownCards() {
+        this.previousDownCards.clear();
         this.previousDownCards.addAll(downCards);
     }
 }
