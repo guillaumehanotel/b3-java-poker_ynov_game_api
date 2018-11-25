@@ -186,7 +186,6 @@ public class Player {
     // TODO call API update user money
     void loose() {
         log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
-        this.chips -= this.currentBet;
         if(this.chips == 0){
             this.isEliminated = true;
         }
