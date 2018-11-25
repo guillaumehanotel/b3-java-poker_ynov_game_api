@@ -25,6 +25,8 @@ public class Player {
     private Boolean hasPlayTurn;
     @JsonIgnore
     private List<Card> downCards;
+    @JsonIgnore
+    private List<Card> previousDownCards;
     private Combination combination;
     private Integer earnedMoney;
     @JsonIgnore
@@ -41,6 +43,7 @@ public class Player {
         // lié à un round
         this.hasDropped = false;
         this.downCards = new ArrayList<>();
+        this.previousDownCards = new ArrayList<>();
         this.currentBet = 0;
 
         // lié à un tour
@@ -193,5 +196,9 @@ public class Player {
 
     public void syncMoneyWithChips() {
         user.setMoney(this.chips);
+    }
+
+    public void savePreviousDownCards() {
+        this.previousDownCards.addAll(downCards);
     }
 }

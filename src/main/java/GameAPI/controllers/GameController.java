@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,6 +84,16 @@ public class GameController {
     List<Card> getUserCards(@PathVariable Integer gameId, @PathVariable Integer userId) {
         Game game = gameService.getGameSystem().getGameById(gameId);
         return game.getPlayerByUserId(userId).getDownCards();
+    }
+
+    @RequestMapping(value = "/game/{gameId}/users/previous/cards", method = RequestMethod.GET)
+    List<UserCards> getPreviousUsersDowncards(@PathVariable Integer gameId) {
+        List<UserCards> userCards = new ArrayList<>();
+        Game game = gameService.getGameSystem().getGameById(gameId);
+        for (Player player : game.getNonEliminatedPlayers()) {
+            userCards.add(new UserCards(player.getUser().getId(), player.getPreviousDownCards()));
+        }
+        return userCards;
     }
 
     /**
