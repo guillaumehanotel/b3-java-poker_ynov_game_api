@@ -63,7 +63,8 @@ public class Player {
 
     public void bets(Integer amount) {
         log.info(this.user.getUsername() + " bets " + amount);
-        this.currentBet = this.currentBet + amount;
+        this.currentBet += amount;
+        this.chips -= amount;
         game.setPot(game.getPot() + amount);
         this.hasPlayTurn = true;
     }
@@ -81,7 +82,7 @@ public class Player {
     }
 
     public Boolean hasAllIn(){
-        return currentBet.equals(chips);
+        return currentBet.equals(chips + currentBet);
     }
 
     /**
@@ -174,16 +175,24 @@ public class Player {
         return allCards;
     }
 
+    // TODO call API update user money
     public void win(Integer earnedMoney) {
+        log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
         this.combination = _combination;
         this.earnedMoney = earnedMoney;
     }
 
+    // TODO call API update user money
     void loose() {
+        log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
         this.chips -= this.currentBet;
         if(this.chips == 0){
             this.isEliminated = true;
         }
+    }
+
+    public void syncMoneyWithChips() {
+        user.setMoney(this.chips);
     }
 }

@@ -39,6 +39,7 @@ public class Round {
         initRound();
         playTurns();
         showDown();
+        players.forEach(Player::syncMoneyWithChips);
         log.info("[ROUND] FINISHED");
     }
 
