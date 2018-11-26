@@ -105,7 +105,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return String.valueOf(user) + "\n";
+        return "player" + user.getUsername();
     }
 
     public Integer comparesCards(Player player) {
@@ -119,6 +119,8 @@ public class Player {
 
     @JsonIgnore
     public Combination getBestCombination() {
+        System.out.println("Player.getBestCombination");
+        System.out.println(this.user.getUsername() + " " + downCards);
         List<Combination> combinations = new ArrayList<>();
         Cards allCards = getAllCards();
         try {
@@ -166,7 +168,6 @@ public class Player {
         } catch (CombinationNotPresentException ignored) {
         }
         Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
-        System.out.println(toString() + " : " + bestCombination);
         this._combination = bestCombination;
         return bestCombination;
     }

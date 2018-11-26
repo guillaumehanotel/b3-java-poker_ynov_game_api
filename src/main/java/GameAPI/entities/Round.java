@@ -155,6 +155,8 @@ public class Round {
         HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult();
         Integer pot = players.stream().mapToInt(Player::getCurrentBet).sum();
         List<Player> winners = playersByResult.get(PlayerStatus.WINNER);
+        System.out.println("pot" + pot);
+        System.out.println("winner" + winners);
         Integer earnedMoneyByPlayer = pot / winners.size();
         winners.forEach(player -> player.win(earnedMoneyByPlayer));
         playersByResult.get(PlayerStatus.LOOSER).forEach(Player::loose);

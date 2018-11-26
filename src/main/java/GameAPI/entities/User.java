@@ -20,6 +20,9 @@ public class User {
         this.money = money;
     }
 
+    public String getUsername() {
+        return username;
+    }
 }
 
 
