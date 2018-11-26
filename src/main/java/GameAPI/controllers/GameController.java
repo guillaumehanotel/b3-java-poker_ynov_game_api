@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Classe Controller qui a pour but de recevoir les action qui viennent du front
+ * Classe Controller qui a pour but de recevoir les actions qui viennent du front
  * et d'éxecuter l'action passé dans le body en vérifiant que :
  * 1- une action est bien attendu
  * 2- le user à l'origine de l'action est bien celui qui doit jouer
@@ -43,7 +43,7 @@ public class GameController {
     /**
      * Un user demande à rejoindre une partie
      */
-    @RequestMapping(value = "/user/join", method = RequestMethod.POST)
+    @RequestMapping(value = "/users/join", method = RequestMethod.POST)
     @ResponseBody
     Game userJoinGame(@RequestBody User user) throws InterruptedException {
         Game game = gameService.makeUserJoinAGame(user);
@@ -97,13 +97,13 @@ public class GameController {
         return game != null ? game.actionQueue.take() : null;
     }
 
-    @RequestMapping(value = "/game/{gameId}/user/{userId}/card", method = RequestMethod.GET)
+    @RequestMapping(value = "/game/{gameId}/users/{userId}/cards", method = RequestMethod.GET)
     List<Card> getUserCards(@PathVariable Integer gameId, @PathVariable Integer userId) {
         Game game = gameService.getGameSystem().getGameById(gameId);
         return game.getPlayerByUserId(userId).getDownCards();
     }
 
-    @RequestMapping(value = "/game/{gameId}/user/previous/card", method = RequestMethod.GET)
+    @RequestMapping(value = "/game/{gameId}/users/previous/cards", method = RequestMethod.GET)
     List<UserCards> getPreviousUsersDowncards(@PathVariable Integer gameId) {
         List<UserCards> userCards = new ArrayList<>();
         Game game = gameService.getGameSystem().getGameById(gameId);
