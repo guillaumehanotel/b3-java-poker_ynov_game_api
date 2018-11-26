@@ -1,7 +1,7 @@
 package GameAPI.controllers;
 
-import GameAPI.entities.*;
-import GameAPI.entities.cards.Card;
+import GameAPI.engine.*;
+import GameAPI.engine.cards.Card;
 import GameAPI.services.GameService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

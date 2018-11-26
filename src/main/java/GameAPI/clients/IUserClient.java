@@ -1,6 +1,6 @@
 package GameAPI.clients;
 
-import GameAPI.entities.User;
+import GameAPI.engine.User;
 import feign.Param;
 import feign.RequestLine;
 import org.springframework.cloud.openfeign.FeignClient;
