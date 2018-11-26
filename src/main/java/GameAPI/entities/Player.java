@@ -27,7 +27,7 @@ public class Player {
     private List<Card> downCards;
     @JsonIgnore
     private List<Card> previousDownCards;
-    private Combination combination;
+    private String combination;
     private Integer earnedMoney;
     @JsonIgnore
     private Combination _combination; //store combination without showing it in json
@@ -182,7 +182,8 @@ public class Player {
     public void win(Integer earnedMoney) {
         log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
-        this.combination = _combination;
+        this.combination = _combination.toString();
+        System.out.println(combination);
         this.earnedMoney = earnedMoney;
     }
 
