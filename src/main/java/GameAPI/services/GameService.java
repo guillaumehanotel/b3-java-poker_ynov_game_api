@@ -1,8 +1,8 @@
 package GameAPI.services;
 
-import GameAPI.engine.Game;
-import GameAPI.engine.GameSystem;
-import GameAPI.engine.User;
+import GameAPI.engine.game.Game;
+import GameAPI.engine.game.GameSystem;
+import GameAPI.engine.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

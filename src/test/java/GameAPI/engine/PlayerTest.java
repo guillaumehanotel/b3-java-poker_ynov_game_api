@@ -1,10 +1,13 @@
 package GameAPI.engine;
 
-import GameAPI.engine.cards.Card;
-import GameAPI.engine.cards.Rank;
-import GameAPI.engine.cards.Suit;
-import GameAPI.engine.cards.combinations.Combination;
-import GameAPI.engine.cards.combinations.DoublePaire;
+import GameAPI.engine.card.Card;
+import GameAPI.engine.card.Rank;
+import GameAPI.engine.card.Suit;
+import GameAPI.engine.card.combinations.Combination;
+import GameAPI.engine.card.combinations.DoublePaire;
+import GameAPI.engine.game.Game;
+import GameAPI.engine.user.Player;
+import GameAPI.engine.user.User;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

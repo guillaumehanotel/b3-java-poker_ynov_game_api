@@ -1,7 +1,7 @@
 package GameAPI.services;
 
 import GameAPI.clients.IUserClient;
-import GameAPI.engine.User;
+import GameAPI.engine.user.User;
 import feign.Feign;
 import feign.Logger;
 import feign.gson.GsonDecoder;
