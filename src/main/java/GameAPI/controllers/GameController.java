@@ -37,11 +37,6 @@ public class GameController {
     @Autowired
     private StatsService statsService;
 
-    @RequestMapping(value = "/users/{userId}/stats", method = RequestMethod.PUT)
-    ResponseEntity<Result> updateUserStats(@RequestBody Result newResult, @PathVariable Integer userId) {
-        return new ResponseEntity<>(statsService.updateResultsByUserId(newResult, userId), HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/users/{userId}/stats", method = RequestMethod.GET)
     ResponseEntity<Result> getUserStats(@PathVariable Integer userId) {
         return new ResponseEntity<>(statsService.getResultsByUserId(userId), HttpStatus.OK);

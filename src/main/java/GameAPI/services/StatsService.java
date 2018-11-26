@@ -23,8 +23,13 @@ public class StatsService {
             .logLevel(Logger.Level.FULL)
             .target(IResultClient.class, "http://localhost:8082/results");
 
+
     public Result getResultsByUserId(Integer id) {
         return iResultClient.getResultsByUserId(id);
+    }
+
+    public Result createResults(Integer id) {
+        return iResultClient.createResults(id);
     }
 
     public Result updateResultsByUserId(Result result, Integer id) {

@@ -34,6 +34,7 @@ public class GameSystem {
         Game game = this.findGameForUser();
         try {
             game.addPlayer(user);
+
         } catch (Exception e) {
             log.error(e.getMessage());
         }

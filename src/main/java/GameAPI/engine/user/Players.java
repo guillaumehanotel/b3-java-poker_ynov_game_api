@@ -1,29 +1,31 @@
 package GameAPI.engine.user;
 
+import GameAPI.engine.game.Round;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Players extends ArrayList<Player> {
 
     private Integer currentOrderIndex = 0;
 
-    public Player getPlayingPlayer(){
+    public Player getPlayingPlayer() {
         return get(currentOrderIndex);
     }
 
-    public void passToNextPlayer(){
-        if (currentOrderIndex+1 == size()) {
+    public void passToNextPlayer() {
+        if (currentOrderIndex + 1 == size()) {
             currentOrderIndex = 0;
         } else {
             currentOrderIndex++;
         }
     }
 
-    public Player getNextPlayingPlayer(){
+    public Player getNextPlayingPlayer() {
         passToNextPlayer();
         Player player = getPlayingPlayer();
         if (player.getIsEliminated() || player.getHasDropped()) {
@@ -36,7 +38,7 @@ public class Players extends ArrayList<Player> {
     /**
      * Récupère le joueur suivant dans l'ordre des joueurs d'un jeu
      */
-    public Player getNextPlayer(){
+    public Player getNextPlayer() {
         if (currentOrderIndex == size()) {
             currentOrderIndex = 0;
         }
@@ -48,14 +50,13 @@ public class Players extends ArrayList<Player> {
     /**
      * Récupère le joueur suivant qui n'est pas éliminé et qui n'est pas couché
      */
-    public Player getNextPlaying(){
+    public Player getNextPlaying() {
         Player player = getNextPlayer();
         if (player.getIsEliminated() || player.getHasDropped()) {
             return getNextPlaying();
         }
         return player;
     }
-
 
 
     /**
@@ -68,16 +69,28 @@ public class Players extends ArrayList<Player> {
         this.currentOrderIndex = currentOrderIndex;
     }
 
-    public HashMap<PlayerStatus, List<Player>> getPlayersByResult() {
+    public HashMap<PlayerStatus, List<Player>> getPlayersByResult(Round round) {
         HashMap<PlayerStatus, List<Player>> players = new HashMap<>();
         players.put(PlayerStatus.WINNER, new ArrayList<>());
         players.put(PlayerStatus.LOOSER, new ArrayList<>());
-        Player winner = stream().max(Player::comparesCards).orElse(null);
-        for (Player player : this) {
-            Integer compareOutput = player.comparesCards(winner);
-            if (compareOutput == 0) players.get(PlayerStatus.WINNER).add(player);
-            else if (compareOutput == -1) players.get(PlayerStatus.LOOSER).add(player);
+
+        if (round.isThereOnePlayingPlayerInRound()) {
+
+            Player winner = this.stream().filter(player -> !player.getHasDropped()).findFirst().get();
+            List<Player> loosers = this.stream().filter(Player::getHasDropped).collect(Collectors.toList());
+            players.get(PlayerStatus.WINNER).add(winner);
+            players.get(PlayerStatus.LOOSER).addAll(loosers);
+
+        } else {
+            Player winner = stream().max(Player::comparesCards).orElse(null);
+            for (Player player : this) {
+                Integer compareOutput = player.comparesCards(winner);
+                if (compareOutput == 0) players.get(PlayerStatus.WINNER).add(player);
+                else if (compareOutput == -1) players.get(PlayerStatus.LOOSER).add(player);
+
+            }
         }
+
         return players;
     }
 

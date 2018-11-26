@@ -145,13 +145,13 @@ public class Player {
     public void win(Integer earnedMoney) {
         log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
-        this.combination = _combination.toString();
+        this.combination = _combination != null ? _combination.toString() : null;
         this.earnedMoney = earnedMoney;
     }
 
     public void loose() {
         log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
-        this.combination = _combination.toString();
+        this.combination = _combination != null ? _combination.toString() : null;
         if(this.chips == 0){
             this.isEliminated = true;
         }

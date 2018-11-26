@@ -121,6 +121,7 @@ public class Game {
         }
         log.info("[GAME " + id + "] FINISHED");
         this.gameStatus = GameStatus.FINISHED;
+        this.markActionAsProcessed();
     }
 
     private Boolean gameHasWinner() {

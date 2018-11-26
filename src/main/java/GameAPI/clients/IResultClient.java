@@ -16,6 +16,13 @@ public interface IResultClient {
     @RequestLine("GET /{userId}")
     Result getResultsByUserId(@Param("userId") Integer userId);
 
+    @RequestLine("POST /")
+    @Headers("Content-Type: application/json")
+    @Body("%7B" +
+            "\"userId\": \"{userId}\"" +
+            "%7D")
+    Result createResults(@Param("userId") Integer userId);
+
     @RequestLine("PUT /{userId}")
     @Headers("Content-Type: application/json")
     @Body("%7B" +

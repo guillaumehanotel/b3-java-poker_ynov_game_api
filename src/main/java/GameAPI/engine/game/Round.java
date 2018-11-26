@@ -161,7 +161,9 @@ public class Round {
     public void showDown() {
         log.info("[TURN] SHOWDOWN");
         game.addFlag(GameFlag.SHOWDOWN);
-        HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult();
+
+        HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult(this);
+
         Integer pot = players.stream().mapToInt(Player::getCurrentBet).sum();
         List<Player> winners = playersByResult.get(PlayerStatus.WINNER);
         Integer earnedMoneyByPlayer = pot / winners.size();
@@ -176,9 +178,7 @@ public class Round {
         return turnNotFinishedCondition() && game.getActionManager().playActionIfExist(this);
     }
 
-    /**
-     * Le tour n'est pas fini tant que les 2 conditions ne sont pas remplis
-     */
+
     public Boolean turnNotFinishedCondition() {
         if (isThereOnePlayingPlayerInRound()) {
             return false;
@@ -187,9 +187,6 @@ public class Round {
         }
     }
 
-    /**
-     * Est-ce que tous les joueurs qui ne se sont pas couchés ont joué ?
-     */
     private Boolean haveAllPlayersPlayed() {
         List<Player> playersStillPlaying = players.stream()
                 .filter(player -> !player.isIgnoredForRound())
@@ -203,9 +200,6 @@ public class Round {
         return true;
     }
 
-    /**
-     * Est-ce que tous les joueurs qui ne se sont pas couchés ont des mises égales ?
-     */
     private Boolean haveAllPlayersEqualBet() {
         return players.stream()
                 .filter(player -> !player.isIgnoredForRound())
@@ -213,11 +207,7 @@ public class Round {
                 .allMatch(bet -> bet.equals(players.get(0).getCurrentBet()));
     }
 
-    /**
-     * Vérifie si il ne reste qu'un joueur restant dans une manche
-     */
-    private Boolean isThereOnePlayingPlayerInRound() {
-        // on compte tous les joueurs s'étant couché, si NB = NB_JOUEUR - 1
+    public Boolean isThereOnePlayingPlayerInRound() {
         return this.players.stream()
                 .filter(Player::getHasDropped)
                 .count() == Game.NB_PLAYER_MAX - 1;
