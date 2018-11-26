@@ -204,4 +204,8 @@ public class Player {
         this.previousDownCards.clear();
         this.previousDownCards.addAll(downCards);
     }
+
+  public User getUser() {
+    return user;
+  }
 }

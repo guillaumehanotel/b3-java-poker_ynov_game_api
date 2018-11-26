@@ -23,6 +23,7 @@ public class Round {
     private Players players;
     private List<Card> communityCards;
     private TurnPhase currentTurnPhase;
+    private List<Integer> winnerIds = new ArrayList<>();
 
     public Round(Game game) {
         this.game = game;
@@ -158,7 +159,10 @@ public class Round {
         System.out.println("pot" + pot);
         System.out.println("winner" + winners);
         Integer earnedMoneyByPlayer = pot / winners.size();
-        winners.forEach(player -> player.win(earnedMoneyByPlayer));
+        for (Player player : winners) {
+            player.win(earnedMoneyByPlayer);
+            winnerIds.add(player.getUser().getId());
+        }
         playersByResult.get(PlayerStatus.LOOSER).forEach(Player::loose);
     }
 
