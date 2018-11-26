@@ -153,6 +153,7 @@ public class Player {
     // TODO call API update user money
     public void loose() {
         log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
+        this.combination = _combination.toString();
         if(this.chips == 0){
             this.isEliminated = true;
         }
