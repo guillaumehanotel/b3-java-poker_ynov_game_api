@@ -63,7 +63,7 @@ public class Quinte extends Combination {
 
   @Override
   public String toString() {
-    return "Quinte starting at " + bestRank;
+    return "Quinte with best rank " + bestRank;
   }
 
   public Rank getBestRank() {

@@ -51,4 +51,9 @@ public class Hauteur extends Combination {
     }
     return 0;
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " with " + ranks;
+  }
 }

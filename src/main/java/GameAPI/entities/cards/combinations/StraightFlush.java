@@ -47,4 +47,9 @@ public class StraightFlush extends Combination {
     StraightFlush straightFlush = (StraightFlush) combination;
     return bestRank.compares(straightFlush.bestRank);
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " with best rank : " + bestRank;
+  }
 }

@@ -31,4 +31,9 @@ public class RoyalFlush extends Combination {
     RoyalFlush royalFlush = (RoyalFlush) combination;
     return 0; // RoyalFlush are always equals
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName();
+  }
 }

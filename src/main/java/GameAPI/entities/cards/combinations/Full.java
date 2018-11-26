@@ -44,4 +44,9 @@ public class Full extends Combination {
     if (compares == 0) compares = doubleRank.compares(full.doubleRank);
     return compares;
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " of " + tripletRank + " by the " + doubleRank;
+  }
 }

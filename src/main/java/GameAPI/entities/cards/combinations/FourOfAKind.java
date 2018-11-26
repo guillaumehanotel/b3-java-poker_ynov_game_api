@@ -46,4 +46,9 @@ public class FourOfAKind extends Combination {
     Integer compares = fourRank.compares(fourOfAKind.fourRank);
     return compares == 0 ? kicker.compares(fourOfAKind.kicker) : compares;
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " of " + fourRank + " by the " + kicker;
+  }
 }

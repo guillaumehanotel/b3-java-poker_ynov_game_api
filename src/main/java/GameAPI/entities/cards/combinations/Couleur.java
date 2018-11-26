@@ -41,4 +41,9 @@ public class Couleur extends Combination {
     Couleur couleur = (Couleur) combination;
     return rank.compares(couleur.rank);
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " by " + rank;
+  }
 }
