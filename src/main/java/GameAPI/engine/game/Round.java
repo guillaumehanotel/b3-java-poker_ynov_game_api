@@ -40,7 +40,7 @@ public class Round {
     public void start() {
         log.info("[ROUND] START");
         game.addFlag(GameFlag.NEW_ROUND);
-        initRound();
+        init();
         playTurns();
         showDown();
         players.forEach(Player::syncMoneyWithChips);
@@ -51,7 +51,7 @@ public class Round {
      * Mise des blinds
      * Distribution des cartes
      */
-    private void initRound() {
+    private void init() {
         players.forEach(Player::savePreviousDownCards);
         players.forEach(Player::resetRound);
         applyBlindsBet();
@@ -59,14 +59,14 @@ public class Round {
     }
 
     private void applyBlindsBet() {
-        this.players.setCurrentOrderIndex(this.game.getDealerPosition() + 1);
-        this.players.getNextPlaying().bets(game.getSmallBlind());
-        this.players.getNextPlaying().bets(game.getBigBlind());
+        players.setCurrentOrderIndex(game.getDealerPosition() + 1);
+        players.getNextPlaying().bets(game.getSmallBlind());
+        players.getNextPlaying().bets(game.getBigBlind());
     }
 
     private void handOutCards() {
         for (int i = 0; i < 2; i++) {
-            for (Player player : this.players) {
+            for (Player player : players) {
                 player.addCardToHand(deck.pop());
             }
         }
@@ -85,12 +85,12 @@ public class Round {
     }
 
     /**
-     * Lancement d'un tour de mise en admettant que les cartes aient été distribuées et que les blinds ont été misées
+     * Lancement d'un tour de mise en admettant que les cartes aient été distribuées et que les blinds aient été misées
      * Un tour de mise continue tant que :
-     * - tout le monde ait joué 1 fois
-     * - tout le monde (pas couché) aient la même mise
+     * - tout le monde n'a pas joué 1 fois
+     * - tout le monde (pas couché) n'a pas la même mise
      */
-    public void startTurn() {
+    private void startTurn() {
         log.info("[TURN] START");
         game.addFlag(GameFlag.NEW_TURN);
         initTurn();
@@ -101,9 +101,9 @@ public class Round {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (turnNotFinishCondition()) game.save();
+        if (turnNotFinishedCondition()) game.save();
 
-        while (turnNotFinish()) {
+        while (turnNotFinished()) {
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
@@ -115,12 +115,12 @@ public class Round {
         log.info("[TURN] FINISHED");
     }
 
-    public void initTurn() {
+    private void initTurn() {
         setupTurnByPhase();
         players.forEach(Player::resetTurn);
     }
 
-    public void setupTurnByPhase() {
+    private void setupTurnByPhase() {
         TurnBehavior turnBehavior = TurnBehavior.getInstance();
         Method turnInitMethod = turnBehavior.getInitMethodByTurnPhase(currentTurnPhase);
         try {
@@ -130,30 +130,35 @@ public class Round {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setupPreFlop() {
         log.info("[TURN] PREFLOP");
         players.setCurrentOrderIndex((game.getDealerPosition() + 3) % Game.NB_PLAYER_MAX);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setupFlop() {
         log.info("[TURN] FLOP");
         players.setCurrentOrderIndex((game.getDealerPosition() + 1) % Game.NB_PLAYER_MAX);
         communityCards.addAll(deck.drawCards(3));
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setupTurn() {
         log.info("[TURN] TURN");
         players.setCurrentOrderIndex((game.getDealerPosition() + 1) % Game.NB_PLAYER_MAX);
         communityCards.addAll(deck.drawCards(1));
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setupRiver() {
         log.info("[TURN] RIVER");
         players.setCurrentOrderIndex((game.getDealerPosition() + 1) % Game.NB_PLAYER_MAX);
         communityCards.addAll(deck.drawCards(1));
     }
 
-    private void showDown() {
+    @SuppressWarnings("WeakerAccess")
+    public void showDown() {
         log.info("[TURN] SHOWDOWN");
         game.addFlag(GameFlag.SHOWDOWN);
         HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult();
@@ -167,14 +172,14 @@ public class Round {
         playersByResult.get(PlayerStatus.LOOSER).forEach(Player::loose);
     }
 
-    private Boolean turnNotFinish() {
-        return turnNotFinishCondition() && game.getActionManager().playActionIfExist(this);
+    private Boolean turnNotFinished() {
+        return turnNotFinishedCondition() && game.getActionManager().playActionIfExist(this);
     }
 
     /**
      * Le tour n'est pas fini tant que les 2 conditions ne sont pas remplis
      */
-    public Boolean turnNotFinishCondition() {
+    public Boolean turnNotFinishedCondition() {
         if (isThereOnePlayingPlayerInRound()) {
             return false;
         } else {

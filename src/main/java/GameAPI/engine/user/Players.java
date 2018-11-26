@@ -73,7 +73,6 @@ public class Players extends ArrayList<Player> {
         players.put(PlayerStatus.WINNER, new ArrayList<>());
         players.put(PlayerStatus.LOOSER, new ArrayList<>());
         Player winner = stream().max(Player::comparesCards).orElse(null);
-//        players.get(PlayerStatus.WINNER).add(winner);
         for (Player player : this) {
             Integer compareOutput = player.comparesCards(winner);
             if (compareOutput == 0) players.get(PlayerStatus.WINNER).add(player);

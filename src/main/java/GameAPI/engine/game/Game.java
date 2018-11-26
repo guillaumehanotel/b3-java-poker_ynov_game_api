@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Data
 public class Game {
 
-    public static final Integer NB_PLAYER_MAX = 2;
+    static final Integer NB_PLAYER_MAX = 2;
 
     private static Integer nbGame = 0;
 
@@ -47,7 +47,7 @@ public class Game {
     private Integer pot;
     private List<String> errors;
     @JsonIgnore
-    private List<Class<? extends Combination>> combinationTypes = Arrays.asList(
+    private final List<Class<? extends Combination>> combinationTypes = Arrays.asList(
         HighHand.class,
         Pair.class,
         DoublePair.class,
@@ -178,9 +178,7 @@ public class Game {
 
     @Override
     public String toString() {
-        return "Game{" + gameStatus +
-                ", players=" + players +
-                '}';
+        return "Game{" + gameStatus + ", players=" + players + '}';
     }
 
     public List<Card> getLastCommunityCards() {

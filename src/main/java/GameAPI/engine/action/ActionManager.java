@@ -62,12 +62,8 @@ public class ActionManager {
 
         // si le tour n'est pas fini après l'action du joueur,
         // on peut enregistrer le jeu actuel dans la actionQueue
-        if (round.turnNotFinishCondition()) {
-            try {
-                game.actionQueue.put(game);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (round.turnNotFinishedCondition()) {
+            game.save();
         }
 
 

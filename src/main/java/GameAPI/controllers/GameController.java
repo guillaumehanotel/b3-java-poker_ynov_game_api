@@ -99,12 +99,12 @@ public class GameController {
                     game.getActionManager().saveAction(action);
                 } else {
 
-                    game.actionQueue.put(game);
+                    game.save();
                 }
 
             } else {
                 game.addError("INVALID ACTION");
-                game.actionQueue.put(game);
+                game.save();
             }
 
         } catch (Exception e) {
