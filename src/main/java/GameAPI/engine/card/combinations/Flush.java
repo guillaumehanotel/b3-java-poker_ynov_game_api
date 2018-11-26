@@ -13,16 +13,14 @@ import java.util.Comparator;
 public class Flush extends Combination {
 
   private static final Integer value = Straight.getNextValue();
-  private final Suit suit;
   private final Rank rank;
 
   static Integer getNextValue() {
     return value + 1;
   }
 
-  Flush(Suit suit, Rank rank) {
+  Flush(Rank rank) {
     super(value);
-    this.suit = suit;
     this.rank = rank;
   }
 
@@ -32,7 +30,6 @@ public class Flush extends Combination {
         .filter(card -> cards.stream().filter(card1 -> card1.getSuit() == card.getSuit()).count() >= 5)
         .max(Comparator.comparingInt(card -> card.getRank().getValue())).orElse(null);
     if (bestCard == null) throw new CombinationNotPresentException("No Flush");
-    suit = bestCard.getSuit();
     rank = bestCard.getRank();
   }
 
@@ -44,6 +41,6 @@ public class Flush extends Combination {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + " by " + rank;
+    return "Couleur " + " par le " + rank;
   }
 }

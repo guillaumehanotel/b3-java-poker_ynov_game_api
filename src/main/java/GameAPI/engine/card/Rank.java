@@ -2,24 +2,26 @@ package GameAPI.engine.card;
 
 public enum Rank {
 
-    Ace(13),
-    Two(0),
-    Three(1),
-    Four(2),
-    Five(3),
-    Six(4),
-    Seven(5),
-    Eight(7),
-    Nine(8),
-    Ten(9),
-    Jack(10),
-    Queen(11),
-    King(12);
+    Ace(13, "As"),
+    Two(0, "Deux"),
+    Three(1, "Trois"),
+    Four(2, "Quatre"),
+    Five(3, "Cind"),
+    Six(4, "Six"),
+    Seven(5, "Sept"),
+    Eight(7, "Huit"),
+    Nine(8, "Neuf"),
+    Ten(9, "Dix"),
+    Jack(10, "Valet"),
+    Queen(11, "Dame"),
+    King(12, "Roi");
 
     private Integer rank;
+    private String verboseName;
 
-    Rank(Integer rank){
+    Rank(Integer rank, String verboseName){
         this.rank = rank;
+        this.verboseName = verboseName;
     }
 
     public Integer getValue(){
@@ -33,4 +35,8 @@ public enum Rank {
         return 0;
     }
 
+    @Override
+    public String toString() {
+        return verboseName;
+    }
 }

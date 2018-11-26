@@ -13,7 +13,7 @@ class FlushTest {
 
   @Test
   void Flush() {
-    Flush expected = new Flush(Suit.HEART, Rank.Queen);
+    Flush expected = new Flush(Rank.Queen);
     Cards cards = new Cards(
         new Card(Suit.HEART, Rank.Queen),
         new Card(Suit.HEART, Rank.Jack),
@@ -42,6 +42,6 @@ class FlushTest {
 
   @Test
   void comparesWithSame() {
-    assertEquals((Integer) 1, new Flush(Suit.HEART, Rank.Queen).comparesWithSame(new Flush(Suit.SPADE, Rank.Jack)));
+    assertEquals((Integer) 1, new Flush(Rank.Queen).comparesWithSame(new Flush(Rank.Jack)));
   }
 }

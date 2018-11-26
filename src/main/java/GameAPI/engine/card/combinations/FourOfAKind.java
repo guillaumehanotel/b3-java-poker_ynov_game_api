@@ -49,6 +49,6 @@ public class FourOfAKind extends Combination {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + " of " + fourRank + " by the " + kicker;
+    return "Carré de " + fourRank + " par le " + kicker;
   }
 }

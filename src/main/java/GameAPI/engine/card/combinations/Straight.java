@@ -63,7 +63,7 @@ public class Straight extends Combination {
 
   @Override
   public String toString() {
-    return "Straight with best rank " + bestRank;
+    return "Suite par le " + bestRank;
   }
 
   public Rank getBestRank() {

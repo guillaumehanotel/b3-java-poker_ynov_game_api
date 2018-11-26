@@ -34,6 +34,6 @@ public class RoyalFlush extends Combination {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName();
+    return "Quinte flush royale";
   }
 }

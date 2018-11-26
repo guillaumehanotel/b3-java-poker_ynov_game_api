@@ -66,6 +66,6 @@ public class DoublePair extends Combination {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + " of " + ranks.get(0) + " and " + ranks.get(1);
+    return "Double paire de " + ranks.get(0) + " par les " + ranks.get(1);
   }
 }

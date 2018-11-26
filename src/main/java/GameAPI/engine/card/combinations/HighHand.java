@@ -54,6 +54,6 @@ public class HighHand extends Combination {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + " with " + ranks;
+    return "Carte haute avec " + ranks;
   }
 }

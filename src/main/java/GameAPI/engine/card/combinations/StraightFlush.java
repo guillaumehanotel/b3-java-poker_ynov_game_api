@@ -50,6 +50,6 @@ public class StraightFlush extends Combination {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + " with best rank : " + bestRank;
+    return "Quinte flush par le " + bestRank;
   }
 }

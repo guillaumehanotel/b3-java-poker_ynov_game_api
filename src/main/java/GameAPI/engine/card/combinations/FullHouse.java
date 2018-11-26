@@ -47,6 +47,6 @@ public class FullHouse extends Combination {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + " of " + tripletRank + " by the " + doubleRank;
+    return "Full de " + tripletRank + " par les " + doubleRank;
   }
 }

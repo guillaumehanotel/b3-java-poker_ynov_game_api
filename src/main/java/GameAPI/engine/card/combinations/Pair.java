@@ -38,7 +38,7 @@ public class Pair extends Combination {
 
   @Override
   public String toString() {
-    return "Pair of " + rank;
+    return "Paire de " + rank;
   }
 
 }
