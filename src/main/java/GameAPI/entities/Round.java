@@ -39,6 +39,7 @@ public class Round {
         initRound();
         playTurns();
         showDown();
+        players.forEach(Player::syncMoneyWithChips);
         log.info("[ROUND] FINISHED");
     }
 
@@ -47,6 +48,7 @@ public class Round {
      * Distribution des cartes
      */
     private void initRound() {
+        players.forEach(Player::savePreviousDownCards);
         players.forEach(Player::resetRound);
         applyBlindsBet();
         handOutCards();

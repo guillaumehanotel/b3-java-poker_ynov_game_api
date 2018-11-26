@@ -25,6 +25,8 @@ public class Player {
     private Boolean hasPlayTurn;
     @JsonIgnore
     private List<Card> downCards;
+    @JsonIgnore
+    private List<Card> previousDownCards;
     private Combination combination;
     private Integer earnedMoney;
     @JsonIgnore
@@ -41,6 +43,7 @@ public class Player {
         // lié à un round
         this.hasDropped = false;
         this.downCards = new ArrayList<>();
+        this.previousDownCards = new ArrayList<>();
         this.currentBet = 0;
 
         // lié à un tour
@@ -63,7 +66,8 @@ public class Player {
 
     public void bets(Integer amount) {
         log.info(this.user.getUsername() + " bets " + amount);
-        this.currentBet = this.currentBet + amount;
+        this.currentBet += amount;
+        this.chips -= amount;
         game.setPot(game.getPot() + amount);
         this.hasPlayTurn = true;
     }
@@ -81,7 +85,7 @@ public class Player {
     }
 
     public Boolean hasAllIn(){
-        return currentBet.equals(chips);
+        return currentBet.equals(chips + currentBet);
     }
 
     /**
@@ -174,16 +178,28 @@ public class Player {
         return allCards;
     }
 
+    // TODO call API update user money
     public void win(Integer earnedMoney) {
+        log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
         this.combination = _combination;
         this.earnedMoney = earnedMoney;
     }
 
+    // TODO call API update user money
     void loose() {
-        this.chips -= this.currentBet;
+        log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
         if(this.chips == 0){
             this.isEliminated = true;
         }
+    }
+
+    public void syncMoneyWithChips() {
+        user.setMoney(this.chips);
+    }
+
+    public void savePreviousDownCards() {
+        this.previousDownCards.clear();
+        this.previousDownCards.addAll(downCards);
     }
 }
