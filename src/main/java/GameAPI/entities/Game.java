@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @Data
 public class Game {
 
-    private static final Integer STARTING_CHIPS = 2000;
     public static final Integer NB_PLAYER_MAX = 2;
 
     private static Integer nbGame = 0;
@@ -48,7 +47,7 @@ public class Game {
         this.gameFlags = new ArrayList<>();
         this.gameStatus = GameStatus.STARTING_PENDING;
         this.players = new ArrayList<>();
-        this.startingChips = STARTING_CHIPS;
+        this.startingChips = GameSystem.STARTING_CHIPS;
         this.actionGuard = new ActionGuard();
         this.actionManager = new ActionManager(this);
         this.dealerPosition = 0;

@@ -1,6 +1,20 @@
 # poker-ynov-game-api
 
 
+### /game/startingChips
+
+Get minimum amount to start a game.
+
+---
+##### ***GET***
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | return startingChips |
+| 500 | Internal server error |
+
 ### /users/join
 
 Add a user to a game and returns the game after adding the user.

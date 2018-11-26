@@ -24,6 +24,15 @@ public class GameController {
     private GameService gameService;
 
     /**
+     * Get starting chips
+     */
+    @RequestMapping(value = "/game/startingChips", method = RequestMethod.GET)
+    Integer getStartingChips() {
+        return GameSystem.STARTING_CHIPS;
+    }
+
+
+    /**
      * Un user demande à rejoindre une partie
      */
     @RequestMapping(value = "/users/join", method = RequestMethod.POST)
