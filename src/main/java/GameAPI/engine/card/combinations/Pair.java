@@ -8,22 +8,22 @@ import lombok.Data;
 import java.util.Comparator;
 
 @Data
-public class Paire extends Combination {
+public class Pair extends Combination {
 
-  private static final Integer value = Hauteur.getNextValue();
+  private static final Integer value = HighHand.getNextValue();
   private final Rank rank;
 
-  public Paire(Rank rank) {
+  public Pair(Rank rank) {
     super(value);
     this.rank = rank;
   }
 
-  public Paire(Cards cards) {
+  public Pair(Cards cards) {
     super(value);
     rank = cards.getRanksByMinimumNbr(2)
         .stream()
         .max(Comparator.comparingInt(Rank::getValue))
-        .orElseThrow(() -> new CombinationNotPresentException("bad paire creation"));
+        .orElseThrow(() -> new CombinationNotPresentException("bad pair creation"));
   }
 
   static Integer getNextValue() {
@@ -32,13 +32,13 @@ public class Paire extends Combination {
 
   @Override
   protected Integer comparesWithSame(Combination combination) {
-    Paire paire = (Paire) combination;
-    return rank.compares(paire.rank);
+    Pair pair = (Pair) combination;
+    return rank.compares(pair.rank);
   }
 
   @Override
   public String toString() {
-    return "Paire of " + rank;
+    return "Pair of " + rank;
   }
 
 }

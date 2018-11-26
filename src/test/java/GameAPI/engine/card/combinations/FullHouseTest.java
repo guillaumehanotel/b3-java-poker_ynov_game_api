@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class FullTest {
+class FullHouseTest {
 
   @Test
   void buildBestFromCards() {
@@ -23,8 +23,8 @@ class FullTest {
         new Card(Suit.DIAMOND, Rank.King),
         new Card(Suit.CLUB, Rank.Queen)
     );
-    Full expected = new Full(Rank.Ace, Rank.Eight);
-    Combination actual = new Full(sourceCards);
+    FullHouse expected = new FullHouse(Rank.Ace, Rank.Eight);
+    Combination actual = new FullHouse(sourceCards);
     assertEquals(expected, actual);
   }
 
@@ -38,16 +38,16 @@ class FullTest {
         new Card(Suit.DIAMOND, Rank.King),
         new Card(Suit.CLUB, Rank.Queen)
     );
-    assertThrows(CombinationNotPresentException.class, () -> new Full(sourceCards));
+    assertThrows(CombinationNotPresentException.class, () -> new FullHouse(sourceCards));
   }
 
   @Test
   void comparesWithSame() {
-    assertEquals((Integer) (-1), new Full(Rank.Three, Rank.Queen).compares(new Full(Rank.Three, Rank.King)));
+    assertEquals((Integer) (-1), new FullHouse(Rank.Three, Rank.Queen).compares(new FullHouse(Rank.Three, Rank.King)));
   }
 
   @Test
   void comparesWithInferior() {
-    assertEquals((Integer) 1, new Full(Rank.Six, Rank.Nine).compares(new Full(Rank.Five, Rank.Queen)));
+    assertEquals((Integer) 1, new FullHouse(Rank.Six, Rank.Nine).compares(new FullHouse(Rank.Five, Rank.Queen)));
   }
 }

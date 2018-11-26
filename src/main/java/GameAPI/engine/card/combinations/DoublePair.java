@@ -11,22 +11,22 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Data
-public class DoublePaire extends Combination {
+public class DoublePair extends Combination {
 
-  private static final Integer value = Paire.getNextValue();
+  private static final Integer value = Pair.getNextValue();
   private final List<Rank> ranks;
 
 
-  public DoublePaire(Rank rank1, Rank rank2) {
+  public DoublePair(Rank rank1, Rank rank2) {
     super(value);
     ranks = Stream.of(rank1, rank2)
         .sorted(Collections.reverseOrder(Comparator.comparingInt(Rank::getValue)))
         .collect(Collectors.toList());
   }
 
-  public DoublePaire(Cards cards) {
+  public DoublePair(Cards cards) {
     super(value);
-    List<Rank> paires = new ArrayList<>();
+    List<Rank> pairs = new ArrayList<>();
     Map<Rank, Integer> rankNbr = new HashMap<>();
     for (Card card : cards) {
       if (!rankNbr.containsKey(card.getRank())) {
@@ -34,16 +34,16 @@ public class DoublePaire extends Combination {
       }
       rankNbr.put(card.getRank(), rankNbr.get(card.getRank()) + 1);
       if (rankNbr.get(card.getRank()) >= 2) {
-        paires.add(card.getRank());
+        pairs.add(card.getRank());
         rankNbr.remove(card.getRank());
       }
     }
-    List<Rank> collect = paires.stream()
+    List<Rank> collect = pairs.stream()
         .sorted(Collections.reverseOrder(Comparator.comparingInt(Rank::getValue)))
         .limit(2)
         .collect(Collectors.toList());
     if (collect.size() < 2) {
-      throw new CombinationNotPresentException("Illegal DoublePaire ranks");
+      throw new CombinationNotPresentException("Illegal DoublePair ranks");
     }
     ranks = collect;
   }
@@ -58,9 +58,9 @@ public class DoublePaire extends Combination {
 
   @Override
   protected Integer comparesWithSame(Combination combination) {
-    DoublePaire doublePaire = (DoublePaire) combination;
-    Integer compares = ranks.get(0).compares(doublePaire.ranks.get(0));
-    if (compares == 0) compares = ranks.get(1).compares(doublePaire.ranks.get(1));
+    DoublePair doublePair = (DoublePair) combination;
+    Integer compares = ranks.get(0).compares(doublePair.ranks.get(0));
+    if (compares == 0) compares = ranks.get(1).compares(doublePair.ranks.get(1));
     return compares;
   }
 

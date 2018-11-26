@@ -31,8 +31,8 @@ public class StraightFlush extends Combination {
         .filter(card -> cards.stream().map(Card::getSuit).filter(suit -> suit == card.getSuit()).count() >= 5)
         .collect(Collectors.toList()));
     try {
-      Quinte bestQuinte = new Quinte(fiveTimesSuitCards);
-      bestRank = bestQuinte.getBestRank();
+      Straight bestStraight = new Straight(fiveTimesSuitCards);
+      bestRank = bestStraight.getBestRank();
     } catch (CombinationNotPresentException | IndexOutOfBoundsException e) {
       throw new CombinationNotPresentException("No straight flush");
     }

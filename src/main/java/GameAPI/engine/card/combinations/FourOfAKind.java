@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Data
 public class FourOfAKind extends Combination {
 
-  private static final Integer value = Full.getNextValue();
+  private static final Integer value = FullHouse.getNextValue();
   private final Rank fourRank;
   private final Rank kicker;
 

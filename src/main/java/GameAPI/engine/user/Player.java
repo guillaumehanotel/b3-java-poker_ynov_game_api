@@ -125,27 +125,27 @@ public class Player {
         List<Combination> combinations = new ArrayList<>();
         Cards allCards = getAllCards();
         try {
-            combinations.add(new Hauteur(allCards));
+            combinations.add(new HighHand(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
         try {
-            combinations.add(new Paire(allCards));
+            combinations.add(new Pair(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
         try {
-            combinations.add(new DoublePaire(allCards));
+            combinations.add(new DoublePair(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
         try {
-            combinations.add(new Brelan(allCards));
+            combinations.add(new ThreeOfAKind(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
         try {
-            combinations.add(new Quinte(allCards));
+            combinations.add(new Straight(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
         try {
-            combinations.add(new Couleur(allCards));
+            combinations.add(new Flush(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
         try {
@@ -153,7 +153,7 @@ public class Player {
         } catch (CombinationNotPresentException ignored) {
         }
         try {
-            combinations.add(new Full(allCards));
+            combinations.add(new FullHouse(allCards));
         } catch (CombinationNotPresentException ignored) {
         }
         try {

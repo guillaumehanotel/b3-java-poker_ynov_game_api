@@ -10,16 +10,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class PaireTest {
+class PairTest {
 
   @Test
-  void Paire() {
+  void Pair() {
     Cards cards = new Cards(
         new Card(Suit.CLUB, Rank.Two),
         new Card(Suit.HEART, Rank.Two)
     );
-    Paire expected = new Paire(Rank.Two);
-    Paire actual = new Paire(cards);
+    Pair expected = new Pair(Rank.Two);
+    Pair actual = new Pair(cards);
     assertEquals(expected, actual);
   }
 
@@ -34,8 +34,8 @@ class PaireTest {
         new Card(Suit.DIAMOND, Rank.King),
         new Card(Suit.CLUB, Rank.Queen)
     );
-    Paire expected = new Paire(Rank.Ace);
-    Paire actual = new Paire(sourceCards);
+    Pair expected = new Pair(Rank.Ace);
+    Pair actual = new Pair(sourceCards);
     assertEquals(expected, actual);
   }
 
@@ -45,7 +45,7 @@ class PaireTest {
         new Card(Suit.CLUB, Rank.Ace),
         new Card(Suit.CLUB, Rank.Eight)
     );
-    assertThrows(CombinationNotPresentException.class, () -> new Paire(sourceCards));
+    assertThrows(CombinationNotPresentException.class, () -> new Pair(sourceCards));
   }
 
   @Test
@@ -54,8 +54,8 @@ class PaireTest {
         new Card(Suit.CLUB, Rank.Ace),
         new Card(Suit.CLUB, Rank.Ace)
     );
-    Paire expected = new Paire(Rank.Ace);
-    Paire actual = new Paire(sourceCards);
+    Pair expected = new Pair(Rank.Ace);
+    Pair actual = new Pair(sourceCards);
     assertEquals(expected, actual);
   }
 
@@ -67,8 +67,8 @@ class PaireTest {
         new Card(Suit.SPADE, Rank.Ace),
         new Card(Suit.DIAMOND, Rank.Ace)
     );
-    Paire expected = new Paire(Rank.Ace);
-    Paire actual = new Paire(sourceCards);
+    Pair expected = new Pair(Rank.Ace);
+    Pair actual = new Pair(sourceCards);
     assertEquals(expected, actual);
   }
 
@@ -79,20 +79,20 @@ class PaireTest {
         new Card(Suit.HEART, Rank.Ace),
         new Card(Suit.SPADE, Rank.Ace)
     );
-    Paire expected = new Paire(Rank.Ace);
-    Paire actual = new Paire(sourceCards);
+    Pair expected = new Pair(Rank.Ace);
+    Pair actual = new Pair(sourceCards);
     assertEquals(expected, actual);
   }
 
   @Test
   void comparesWithSame() {
-    assertEquals((Integer) 0, new Paire(Rank.Ace).comparesWithSame(new Paire(Rank.Ace)));
+    assertEquals((Integer) 0, new Pair(Rank.Ace).comparesWithSame(new Pair(Rank.Ace)));
   }
 
   @Test
   void comparesWithOtherSuperior() {
-    Paire paire = new Paire(Rank.Ace);
-    DoublePaire doublePaire = new DoublePaire(Rank.Five, Rank.Four);
-    assertEquals((Integer) (-1), paire.compares(doublePaire));
+    Pair pair = new Pair(Rank.Ace);
+    DoublePair doublePair = new DoublePair(Rank.Five, Rank.Four);
+    assertEquals((Integer) (-1), pair.compares(doublePair));
   }
 }

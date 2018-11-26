@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class QuinteTest {
+class StraightTest {
 
   @Test
   void Quinte() {
@@ -23,7 +23,7 @@ class QuinteTest {
         new Card(Suit.HEART, Rank.Five),
         new Card(Suit.SPADE, Rank.Ten)
     );
-    assertEquals(new Quinte(Rank.King), new Quinte(cards));
+    assertEquals(new Straight(Rank.King), new Straight(cards));
   }
 
   @Test
@@ -37,7 +37,7 @@ class QuinteTest {
         new Card(Suit.CLUB, Rank.Eight),
         new Card(Suit.SPADE, Rank.Ten)
     );
-    assertEquals(new Quinte(Rank.King), new Quinte(cards));
+    assertEquals(new Straight(Rank.King), new Straight(cards));
   }
 
   @Test
@@ -51,7 +51,7 @@ class QuinteTest {
         new Card(Suit.HEART, Rank.Five),
         new Card(Suit.SPADE, Rank.Ace)
     );
-    assertThrows(CombinationNotPresentException.class, () -> new Quinte(cards));
+    assertThrows(CombinationNotPresentException.class, () -> new Straight(cards));
   }
 
   @Test
@@ -65,12 +65,12 @@ class QuinteTest {
         new Card(Suit.HEART, Rank.Five),
         new Card(Suit.HEART, Rank.Ten)
     );
-    assertEquals(new Quinte(Rank.Five), new Quinte(cards));
+    assertEquals(new Straight(Rank.Five), new Straight(cards));
   }
 
   @Test
   void comparesWithSame() {
-    assertEquals((Integer) 1, new Quinte(Rank.Queen).comparesWithSame(new Quinte(Rank.Jack)));
+    assertEquals((Integer) 1, new Straight(Rank.Queen).comparesWithSame(new Straight(Rank.Jack)));
   }
 
 }

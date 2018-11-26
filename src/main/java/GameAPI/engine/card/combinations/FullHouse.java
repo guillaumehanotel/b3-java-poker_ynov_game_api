@@ -8,9 +8,9 @@ import lombok.Data;
 import java.util.Comparator;
 
 @Data
-public class Full extends Combination {
+public class FullHouse extends Combination {
 
-  private static Integer value = Couleur.getNextValue();
+  private static Integer value = Flush.getNextValue();
   private Rank doubleRank;
   private Rank tripletRank;
 
@@ -18,30 +18,30 @@ public class Full extends Combination {
     return value;
   }
 
-  Full(Rank tripletRank, Rank doubleRank) {
+  FullHouse(Rank tripletRank, Rank doubleRank) {
     super(value);
     this.tripletRank = tripletRank;
     this.doubleRank = doubleRank;
   }
 
-  public Full(Cards cards) throws CombinationNotPresentException {
+  public FullHouse(Cards cards) throws CombinationNotPresentException {
     super(value);
     tripletRank = cards.getRanksByMinimumNbr(3)
         .stream()
         .max(Comparator.comparingInt(Rank::getValue))
-        .orElseThrow(() -> new CombinationNotPresentException("Full triplet is null"));
+        .orElseThrow(() -> new CombinationNotPresentException("FullHouse triplet is null"));
     doubleRank = cards.getRanksByMinimumNbr(2)
         .stream()
         .filter(rank -> rank != tripletRank)
         .max(Comparator.comparingInt(Rank::getValue))
-        .orElseThrow(() -> new CombinationNotPresentException("Full double is null"));
+        .orElseThrow(() -> new CombinationNotPresentException("FullHouse double is null"));
   }
 
   @Override
   protected Integer comparesWithSame(Combination combination) {
-    Full full = (Full) combination;
-    Integer compares = tripletRank.compares(full.tripletRank);
-    if (compares == 0) compares = doubleRank.compares(full.doubleRank);
+    FullHouse fullHouse = (FullHouse) combination;
+    Integer compares = tripletRank.compares(fullHouse.tripletRank);
+    if (compares == 0) compares = doubleRank.compares(fullHouse.doubleRank);
     return compares;
   }
 

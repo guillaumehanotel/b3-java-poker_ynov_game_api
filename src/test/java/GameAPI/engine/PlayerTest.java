@@ -4,7 +4,7 @@ import GameAPI.engine.card.Card;
 import GameAPI.engine.card.Rank;
 import GameAPI.engine.card.Suit;
 import GameAPI.engine.card.combinations.Combination;
-import GameAPI.engine.card.combinations.DoublePaire;
+import GameAPI.engine.card.combinations.DoublePair;
 import GameAPI.engine.game.Game;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.User;
@@ -27,7 +27,7 @@ class PlayerTest {
         game
     );
     player.setDownCards(Arrays.asList(new Card(Suit.HEART, Rank.King), new Card(Suit.SPADE, Rank.Four)));
-    Combination expected = new DoublePaire(Rank.King, Rank.Four);
+    Combination expected = new DoublePair(Rank.King, Rank.Four);
     Combination actual = player.getBestCombination();
     assertEquals(expected, actual);
   }

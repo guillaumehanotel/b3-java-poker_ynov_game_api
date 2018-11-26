@@ -12,21 +12,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class Quinte extends Combination {
+public class Straight extends Combination {
 
-  private static final Integer value = Brelan.getNextValue();
+  private static final Integer value = ThreeOfAKind.getNextValue();
   private final Rank bestRank;
 
   static Integer getNextValue() {
     return value + 1;
   }
 
-  public Quinte(Rank lastRank) {
+  public Straight(Rank lastRank) {
     super(value);
     this.bestRank = lastRank;
   }
 
-  public Quinte(Cards cards) {
+  public Straight(Cards cards) {
     super(value);
     List<Rank> collect = cards.stream()
         .map(Card::getRank)
@@ -52,18 +52,18 @@ public class Quinte extends Combination {
         return;
       }
     }
-    throw new CombinationNotPresentException("No Quinte");
+    throw new CombinationNotPresentException("No Straight");
   }
 
   @Override
   protected Integer comparesWithSame(Combination combination) {
-    Quinte quinte = (Quinte) combination;
-    return this.bestRank.compares(quinte.bestRank);
+    Straight straight = (Straight) combination;
+    return this.bestRank.compares(straight.bestRank);
   }
 
   @Override
   public String toString() {
-    return "Quinte with best rank " + bestRank;
+    return "Straight with best rank " + bestRank;
   }
 
   public Rank getBestRank() {

@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CouleurTest {
+class FlushTest {
 
   @Test
-  void Couleur() {
-    Couleur expected = new Couleur(Suit.HEART, Rank.Queen);
+  void Flush() {
+    Flush expected = new Flush(Suit.HEART, Rank.Queen);
     Cards cards = new Cards(
         new Card(Suit.HEART, Rank.Queen),
         new Card(Suit.HEART, Rank.Jack),
@@ -23,12 +23,12 @@ class CouleurTest {
         new Card(Suit.SPADE, Rank.Queen),
         new Card(Suit.DIAMOND, Rank.Queen)
     );
-    Couleur actual = new Couleur(cards);
+    Flush actual = new Flush(cards);
     assertEquals(expected, actual);
   }
 
   @Test
-  void CouleurFail() {
+  void FlushFail() {
     Cards cards = new Cards(
         new Card(Suit.HEART, Rank.Queen),
         new Card(Suit.HEART, Rank.Jack),
@@ -37,11 +37,11 @@ class CouleurTest {
         new Card(Suit.SPADE, Rank.Queen),
         new Card(Suit.DIAMOND, Rank.Queen)
     );
-    assertThrows(CombinationNotPresentException.class, () -> new Couleur(cards));
+    assertThrows(CombinationNotPresentException.class, () -> new Flush(cards));
   }
 
   @Test
   void comparesWithSame() {
-    assertEquals((Integer) 1, new Couleur(Suit.HEART, Rank.Queen).comparesWithSame(new Couleur(Suit.SPADE, Rank.Jack)));
+    assertEquals((Integer) 1, new Flush(Suit.HEART, Rank.Queen).comparesWithSame(new Flush(Suit.SPADE, Rank.Jack)));
   }
 }

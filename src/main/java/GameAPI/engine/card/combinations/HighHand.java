@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class Hauteur extends Combination {
+public class HighHand extends Combination {
   private static Integer value = 0;
   private List<Rank> ranks;
 
-  Hauteur(Collection<Rank> ranks) {
+  HighHand(Collection<Rank> ranks) {
     super(value);
     this.ranks = ranks
         .stream()
@@ -24,7 +24,7 @@ public class Hauteur extends Combination {
         .collect(Collectors.toList());
   }
 
-  public Hauteur(Cards cards) {
+  public HighHand(Cards cards) {
     super(value);
     this.ranks = cards
         .stream()
@@ -43,10 +43,10 @@ public class Hauteur extends Combination {
 
   @Override
   protected Integer comparesWithSame(Combination combination) {
-    Hauteur hauteur = (Hauteur) combination;
-    if (ranks.size() != hauteur.ranks.size()) throw new RuntimeException("Can't compare hauteurs of different sizes");
+    HighHand highHand = (HighHand) combination;
+    if (ranks.size() != highHand.ranks.size()) throw new RuntimeException("Can't compare hauteurs of different sizes");
     for (int i = 0; i < ranks.size(); i++) {
-      Integer compares = ranks.get(i).compares(hauteur.ranks.get(i));
+      Integer compares = ranks.get(i).compares(highHand.ranks.get(i));
       if (compares != 0) return compares;
     }
     return 0;

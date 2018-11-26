@@ -9,36 +9,36 @@ import lombok.Data;
 import java.util.Comparator;
 
 @Data
-public class Brelan extends Combination {
+public class ThreeOfAKind extends Combination {
 
-  private static final Integer value = DoublePaire.getNextValue();
+  private static final Integer value = DoublePair.getNextValue();
   private final Rank rank;
 
   static Integer getNextValue() {
     return value + 1;
   }
 
-  Brelan(Rank rank) {
+  ThreeOfAKind(Rank rank) {
     super(value);
     this.rank = rank;
   }
 
-  public Brelan(Cards cards) {
+  public ThreeOfAKind(Cards cards) {
     super(value);
     rank = cards.getRanksByMinimumNbr(3)
         .stream()
         .max(Comparator.comparingInt(Rank::getValue))
-        .orElseThrow(() -> new CombinationNotPresentException("Error while creating brelan"));
+        .orElseThrow(() -> new CombinationNotPresentException("ENo three of a kind"));
   }
 
   @Override
   protected Integer comparesWithSame(Combination combination) {
-    Brelan brelan = (Brelan) combination;
-    return rank.compares(brelan.rank);
+    ThreeOfAKind threeOfAKind = (ThreeOfAKind) combination;
+    return rank.compares(threeOfAKind.rank);
   }
 
   @Override
   public String toString() {
-    return "Brelan of " + rank;
+    return "ThreeOfAKind of " + rank;
   }
 }

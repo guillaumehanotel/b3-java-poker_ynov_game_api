@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BrelanTest {
+class ThreeOfAKindTest {
 
   @Test
-  void Brelan() {
+  void ThreeOfAKind() {
     Cards cards = new Cards(
         new Card(Suit.HEART, Rank.King),
         new Card(Suit.HEART, Rank.Eight),
@@ -21,11 +21,11 @@ class BrelanTest {
         new Card(Suit.HEART, Rank.Nine),
         new Card(Suit.HEART, Rank.King)
     );
-    assertEquals(new Brelan(Rank.Eight), new Brelan(cards));
+    assertEquals(new ThreeOfAKind(Rank.Eight), new ThreeOfAKind(cards));
   }
 
   @Test
   void comparesWithSame() {
-    assertEquals((Integer) (-1), new Brelan(Rank.King).compares(new Brelan(Rank.Ace)));
+    assertEquals((Integer) (-1), new ThreeOfAKind(Rank.King).compares(new ThreeOfAKind(Rank.Ace)));
   }
 }
