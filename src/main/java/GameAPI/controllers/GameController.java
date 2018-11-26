@@ -7,12 +7,16 @@ import GameAPI.engine.card.Card;
 import GameAPI.engine.game.Game;
 import GameAPI.engine.game.GameStatus;
 import GameAPI.engine.game.GameSystem;
+import GameAPI.engine.game.Result;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.User;
 import GameAPI.engine.user.UserCards;
 import GameAPI.services.GameService;
+import GameAPI.services.StatsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,6 +34,20 @@ public class GameController {
 
     @Autowired
     private GameService gameService;
+
+    @Autowired
+    private StatsService statsService;
+
+    @RequestMapping(value = "/users/{userId}/stats", method = RequestMethod.PUT)
+    ResponseEntity<Result> updateUserStats(@RequestBody Result newResult, @PathVariable Integer userId) {
+        log.info(newResult.toString());
+        return new ResponseEntity<>(statsService.updateResultsByUserId(newResult, userId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/users/{userId}/stats", method = RequestMethod.GET)
+    ResponseEntity<Result> getUserStats(@PathVariable Integer userId) {
+        return new ResponseEntity<>(statsService.getResultsByUserId(userId), HttpStatus.OK);
+    }
 
     /**
      * Get starting chips
@@ -58,7 +76,6 @@ public class GameController {
     /**
      * Gestion de la réception d'une action
      * Vérifie que l'action possède bien un gameId, et récupère le Game associé.
-     * <p>
      * A partir de ce game, aller checker son ActionGuard pour vérifier :
      * - si une action est attendue
      * - si le user à l'origine de cette action est bien celui attendu
