@@ -60,7 +60,7 @@ public class DoublePaire extends Combination {
   protected Integer comparesWithSame(Combination combination) {
     DoublePaire doublePaire = (DoublePaire) combination;
     Integer compares = ranks.get(0).compares(doublePaire.ranks.get(0));
-    if (compares == 0) compares = ranks.get(1).compares(doublePaire.ranks.get(0));
+    if (compares == 0) compares = ranks.get(1).compares(doublePaire.ranks.get(1));
     return compares;
   }
 
