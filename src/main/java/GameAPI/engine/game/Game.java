@@ -60,7 +60,6 @@ public class Game {
         RoyalFlush.class
     );
 
-
     public Game() {
         incrementGameId();
         this.gameFlags = new ArrayList<>();
@@ -87,6 +86,7 @@ public class Game {
     public void addPlayer(User user) throws Exception {
         if (!checkIfUserIsAlreadyInGame(user)) {
             this.players.add(new Player(user, startingChips, this));
+            user.setMoney(user.getMoney() - startingChips);
             log.info("Player [" + user.getUsername() + "] join the game n°" + this.getId());
             startGameIfAllPlayersHere();
         } else {
@@ -181,6 +181,7 @@ public class Game {
         return "Game{" + gameStatus + ", players=" + players + '}';
     }
 
+    @JsonIgnore
     public List<Card> getLastCommunityCards() {
         return rounds.isEmpty() ? new ArrayList<>() : rounds.get(rounds.size() - 1).getCommunityCards();
     }

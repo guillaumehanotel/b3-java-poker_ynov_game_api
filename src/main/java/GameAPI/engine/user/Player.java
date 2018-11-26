@@ -142,7 +142,6 @@ public class Player {
         return allCards;
     }
 
-    // TODO call API update user money
     public void win(Integer earnedMoney) {
         log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
@@ -150,7 +149,6 @@ public class Player {
         this.earnedMoney = earnedMoney;
     }
 
-    // TODO call API update user money
     public void loose() {
         log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
         this.combination = _combination.toString();
@@ -160,7 +158,7 @@ public class Player {
     }
 
     public void syncMoneyWithChips() {
-        user.setMoney(this.chips);
+        user.setMoney(user.getMoney() + this.chips);
     }
 
     public void savePreviousDownCards() {

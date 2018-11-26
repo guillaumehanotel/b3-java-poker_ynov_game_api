@@ -11,7 +11,6 @@ import GameAPI.engine.game.Result;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.User;
 import GameAPI.engine.user.UserCards;
-import GameAPI.services.GameService;
 import GameAPI.services.StatsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +32,13 @@ import java.util.List;
 public class GameController {
 
     @Autowired
-    private GameService gameService;
+    private GameSystem gameSystem;
 
     @Autowired
     private StatsService statsService;
 
     @RequestMapping(value = "/users/{userId}/stats", method = RequestMethod.PUT)
     ResponseEntity<Result> updateUserStats(@RequestBody Result newResult, @PathVariable Integer userId) {
-        log.info(newResult.toString());
         return new ResponseEntity<>(statsService.updateResultsByUserId(newResult, userId), HttpStatus.OK);
     }
 
@@ -64,7 +62,7 @@ public class GameController {
     @RequestMapping(value = "/users/join", method = RequestMethod.POST)
     @ResponseBody
     Game userJoinGame(@RequestBody User user) throws InterruptedException {
-        Game game = gameService.makeUserJoinAGame(user);
+        Game game = gameSystem.userAskForGame(user);
         game.resetFlagAndQueueAndErrors();
         if (game.getGameStatus() == GameStatus.IN_PROGRESS) {
             return game.joinQueue.take();
@@ -86,7 +84,7 @@ public class GameController {
         Integer gameId = action.getGameId();
         Game game = null;
         try {
-            game = gameService.getGameSystem().getGameById(gameId);
+            game = gameSystem.getGameById(gameId);
 
             if (checkAction(action)) {
 
@@ -116,14 +114,14 @@ public class GameController {
 
     @RequestMapping(value = "/game/{gameId}/users/{userId}/cards", method = RequestMethod.GET)
     List<Card> getUserCards(@PathVariable Integer gameId, @PathVariable Integer userId) {
-        Game game = gameService.getGameSystem().getGameById(gameId);
+        Game game = gameSystem.getGameById(gameId);
         return game.getPlayerByUserId(userId).getDownCards();
     }
 
     @RequestMapping(value = "/game/{gameId}/users/previous/cards", method = RequestMethod.GET)
     List<UserCards> getPreviousUsersDowncards(@PathVariable Integer gameId) {
         List<UserCards> userCards = new ArrayList<>();
-        Game game = gameService.getGameSystem().getGameById(gameId);
+        Game game = gameSystem.getGameById(gameId);
         for (Player player : game.getNonEliminatedPlayers()) {
             userCards.add(new UserCards(player.getUser().getId(), player.getPreviousDownCards()));
         }
