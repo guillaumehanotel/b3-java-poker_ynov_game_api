@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,49 +125,13 @@ public class Player {
         System.out.println(this.user.getUsername() + " " + downCards);
         List<Combination> combinations = new ArrayList<>();
         Cards allCards = getAllCards();
-        try {
-            combinations.add(new HighHand(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new Pair(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new DoublePair(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new ThreeOfAKind(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new Straight(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new Flush(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new FourOfAKind(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new FullHouse(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new FourOfAKind(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new StraightFlush(allCards));
-        } catch (CombinationNotPresentException ignored) {
-        }
-        try {
-            combinations.add(new RoyalFlush(allCards));
-        } catch (CombinationNotPresentException ignored) {
+        for (Class<? extends Combination> possibleCombination : game.getCombinationTypes()) {
+            try {
+                combinations.add(possibleCombination.getDeclaredConstructor(Cards.class).newInstance(allCards));
+            } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                if (e.getCause().getClass() != CombinationNotPresentException.class) e.printStackTrace();
+            }
+            System.out.println("done");
         }
         Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
         this._combination = bestCombination;

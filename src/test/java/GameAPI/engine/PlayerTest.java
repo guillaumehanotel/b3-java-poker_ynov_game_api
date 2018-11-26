@@ -5,6 +5,8 @@ import GameAPI.engine.card.Rank;
 import GameAPI.engine.card.Suit;
 import GameAPI.engine.card.combinations.Combination;
 import GameAPI.engine.card.combinations.DoublePair;
+import GameAPI.engine.card.combinations.HighHand;
+import GameAPI.engine.card.combinations.Pair;
 import GameAPI.engine.game.Game;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.User;
@@ -21,6 +23,7 @@ class PlayerTest {
   void getBestCombination() {
     Game game = Mockito.mock(Game.class);
     Mockito.when(game.getLastCommunityCards()).thenReturn(Arrays.asList(new Card(Suit.DIAMOND, Rank.King), new Card(Suit.CLUB, Rank.Four)));
+    Mockito.when(game.getCombinationTypes()).thenReturn(Arrays.asList(HighHand.class, Pair.class, DoublePair.class));
     Player player = new Player(
         new User("1", "2", 1000),
         10000,

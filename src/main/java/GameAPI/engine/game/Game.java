@@ -1,5 +1,6 @@
 package GameAPI.engine.game;
 
+import GameAPI.engine.card.combinations.*;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.User;
 import GameAPI.engine.action.ActionGuard;
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -44,6 +46,19 @@ public class Game {
     private Integer playingPlayerCallValue;
     private Integer pot;
     private List<String> errors;
+    @JsonIgnore
+    private List<Class<? extends Combination>> combinationTypes = Arrays.asList(
+        HighHand.class,
+        Pair.class,
+        DoublePair.class,
+        ThreeOfAKind.class,
+        Straight.class,
+        Flush.class,
+        FullHouse.class,
+        FourOfAKind.class,
+        StraightFlush.class,
+        RoyalFlush.class
+    );
 
 
     public Game() {
@@ -170,5 +185,9 @@ public class Game {
 
     public List<Card> getLastCommunityCards() {
         return rounds.get(rounds.size() - 1).getCommunityCards();
+    }
+
+    public List<Class<? extends Combination>> getCombinationTypes() {
+        return combinationTypes;
     }
 }

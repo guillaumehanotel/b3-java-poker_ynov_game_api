@@ -3,6 +3,7 @@ package GameAPI.engine;
 import GameAPI.engine.card.Card;
 import GameAPI.engine.card.Rank;
 import GameAPI.engine.card.Suit;
+import GameAPI.engine.card.combinations.*;
 import GameAPI.engine.game.Game;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.PlayerStatus;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,14 +27,19 @@ class PlayersTest {
   void setUp() throws Exception {
     players = new Players();
     Game game = Mockito.mock(Game.class);
-    List<Card> cards = Arrays.asList(
-        new Card(Suit.HEART, Rank.King),
-        new Card(Suit.HEART, Rank.Queen),
-        new Card(Suit.SPADE, Rank.King),
-        new Card(Suit.DIAMOND, Rank.Queen),
-        new Card(Suit.CLUB, Rank.Ace)
-    );
-    Mockito.when(game.getLastCommunityCards()).thenReturn(cards);
+    Mockito.when(game.getLastCommunityCards()).thenReturn(Collections.emptyList());
+    Mockito.when(game.getCombinationTypes()).thenReturn(Arrays.asList(
+        HighHand.class,
+        Pair.class,
+        DoublePair.class,
+        ThreeOfAKind.class,
+        Straight.class,
+        Flush.class,
+        FullHouse.class,
+        FourOfAKind.class,
+        StraightFlush.class,
+        RoyalFlush.class
+    ));
     players.add(new Player(new User("mail", "p1", 10000), 1000, game));
     players.add(new Player(new User("mail", "p2", 10000), 1000, game));
     players.add(new Player(new User("mail", "p3", 10000), 1000, game));
