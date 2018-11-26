@@ -101,7 +101,7 @@ public class Round {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (turnNotFinishedCondition()) game.save();
+        if (turnNotFinishedCondition()) game.markActionAsProcessed();
 
         while (turnNotFinished()) {
             try {

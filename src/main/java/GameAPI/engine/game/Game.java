@@ -40,8 +40,13 @@ public class Game {
     private Integer bigBlind;
     @JsonIgnore
     public BlockingQueue<Game> joinQueue = new LinkedBlockingQueue<>();
+
+    /**
+     * This field is used as a way to get this when it is ready.
+     */
     @JsonIgnore
-    public BlockingQueue<Game> actionQueue = new LinkedBlockingQueue<>();
+    private BlockingQueue<Game> gameQueue = new LinkedBlockingQueue<>();
+
     private Integer playingPlayerId;
     private Integer playingPlayerCallValue;
     private Integer pot;
@@ -83,7 +88,7 @@ public class Game {
         this.id = Game.nbGame;
     }
 
-    public void addPlayer(User user) throws Exception {
+    void addPlayer(User user) throws Exception {
         if (!checkIfUserIsAlreadyInGame(user)) {
             this.players.add(new Player(user, startingChips, this));
             user.setMoney(user.getMoney() - startingChips);
@@ -98,14 +103,14 @@ public class Game {
         return players.stream().map(Player::getUser).anyMatch(user1 -> user1.equals(user));
     }
 
-    public void startGameIfAllPlayersHere() {
+    private void startGameIfAllPlayersHere() {
         if (this.players.size() == NB_PLAYER_MAX) {
             this.setGameStatus(GameStatus.IN_PROGRESS);
             new Thread(this::start).start();
         }
     }
 
-    public void start() {
+    private void start() {
         log.info("[GAME " + id + "] START");
         this.gameFlags.add(GameFlag.GAME_STARTED);
         while (!gameHasWinner()) {
@@ -131,7 +136,7 @@ public class Game {
 
     public void resetFlagAndQueueAndErrors() {
         this.errors.clear();
-        this.actionQueue.clear();
+        this.gameQueue.clear();
         this.joinQueue.clear();
         gameFlags.clear();
     }
@@ -141,7 +146,7 @@ public class Game {
     }
 
     public Player getPlayerByUserId(Integer userId){
-        List<Player> resultUserList = this.players.stream()
+        List<Player> resultUserList = players.stream()
                 .filter(player -> player.getUser().getId().equals(userId))
                 .collect(Collectors.toList());
         if (resultUserList.size() != 1)
@@ -149,12 +154,8 @@ public class Game {
         return resultUserList.get(0);
     }
 
-    public void addFlag(GameFlag gameFlag) {
-        this.gameFlags.add(gameFlag);
-    }
-
-    public void resetFlags(){
-        this.gameFlags.clear();
+    void addFlag(GameFlag gameFlag) {
+        gameFlags.add(gameFlag);
     }
 
     public void addError(String error){
@@ -168,11 +169,25 @@ public class Game {
         this.setPlayingPlayerCallValue(round.getBiggestBet() - playingPlayer.getCurrentBet());
     }
 
-    public void save(){
+    /**
+     * When this method is called, we consider this has ended to process the last action it had to process
+     */
+    public void markActionAsProcessed(){
         try {
-            actionQueue.put(this);
+            gameQueue.put(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Return this when this has ended to process an action
+     */
+    public Game whenActionProcessed() {
+        try {
+            return gameQueue.take();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 

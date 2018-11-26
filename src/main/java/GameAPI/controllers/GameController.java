@@ -97,19 +97,19 @@ public class GameController {
                     game.getActionManager().saveAction(action);
                 } else {
 
-                    game.save();
+                    game.markActionAsProcessed();
                 }
 
             } else {
                 game.addError("INVALID ACTION");
-                game.save();
+                game.markActionAsProcessed();
             }
 
         } catch (Exception e) {
             log.error(e.getMessage());
         }
 
-        return game != null ? game.actionQueue.take() : null;
+        return game != null ? game.whenActionProcessed() : null;
     }
 
     @RequestMapping(value = "/game/{gameId}/users/{userId}/cards", method = RequestMethod.GET)

@@ -61,9 +61,9 @@ public class ActionManager {
         this.resetAction();
 
         // si le tour n'est pas fini après l'action du joueur,
-        // on peut enregistrer le jeu actuel dans la actionQueue
+        // on peut enregistrer le jeu actuel dans la gameQueue
         if (round.turnNotFinishedCondition()) {
-            game.save();
+            game.markActionAsProcessed();
         }
 
 
@@ -74,7 +74,7 @@ public class ActionManager {
 
     }
 
-    public void executeAction(Round round){
+    private void executeAction(Round round){
 
         Player player = round.getPlayers().getPlayingPlayer();
 
