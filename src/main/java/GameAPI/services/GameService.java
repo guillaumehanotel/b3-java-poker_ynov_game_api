@@ -14,9 +14,6 @@ public class GameService {
     @Autowired
     GameSystem gameSystem;
 
-    @Autowired
-    UserService userService;
-
     public Game makeUserJoinAGame(User user){
         return gameSystem.userAskForGame(user);
     }
@@ -25,7 +22,4 @@ public class GameService {
         return gameSystem;
     }
 
-    public UserService getUserService() {
-        return userService;
-    }
 }
