@@ -184,7 +184,7 @@ public class Game {
     }
 
     public List<Card> getLastCommunityCards() {
-        return rounds.get(rounds.size() - 1).getCommunityCards();
+        return rounds.isEmpty() ? new ArrayList<>() : rounds.get(rounds.size() - 1).getCommunityCards();
     }
 
     public List<Class<? extends Combination>> getCombinationTypes() {
