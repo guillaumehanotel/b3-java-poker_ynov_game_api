@@ -69,22 +69,16 @@ public class Players extends ArrayList<Player> {
     }
 
     public HashMap<PlayerStatus, List<Player>> getPlayersByResult() {
-        System.out.println("Players.getPlayersByResult");
         HashMap<PlayerStatus, List<Player>> players = new HashMap<>();
         players.put(PlayerStatus.WINNER, new ArrayList<>());
         players.put(PlayerStatus.LOOSER, new ArrayList<>());
         Player winner = stream().max(Player::comparesCards).orElse(null);
-        System.out.println("winner" + winner);
-        System.out.println(winner);
 //        players.get(PlayerStatus.WINNER).add(winner);
         for (Player player : this) {
-            System.out.println("Player " + player);
             Integer compareOutput = player.comparesCards(winner);
-            System.out.println(compareOutput);
             if (compareOutput == 0) players.get(PlayerStatus.WINNER).add(player);
             else if (compareOutput == -1) players.get(PlayerStatus.LOOSER).add(player);
         }
-        System.out.println(players.get(PlayerStatus.WINNER));
         return players;
     }
 

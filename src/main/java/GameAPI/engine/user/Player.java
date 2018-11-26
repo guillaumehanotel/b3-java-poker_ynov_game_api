@@ -121,8 +121,6 @@ public class Player {
 
     @JsonIgnore
     public Combination getBestCombination() {
-        System.out.println("Player.getBestCombination");
-        System.out.println(this.user.getUsername() + " " + downCards);
         List<Combination> combinations = new ArrayList<>();
         Cards allCards = getAllCards();
         for (Class<? extends Combination> possibleCombination : game.getCombinationTypes()) {
@@ -131,7 +129,6 @@ public class Player {
             } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                 if (e.getCause().getClass() != CombinationNotPresentException.class) e.printStackTrace();
             }
-            System.out.println("done");
         }
         Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
         this._combination = bestCombination;
@@ -150,7 +147,6 @@ public class Player {
         log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
         this.combination = _combination.toString();
-        System.out.println(combination);
         this.earnedMoney = earnedMoney;
     }
 
