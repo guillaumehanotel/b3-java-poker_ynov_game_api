@@ -1,5 +1,6 @@
 package GameAPI.entities;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -17,9 +18,12 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
+@Data
 public class GameSystem {
 
     private List<Game> games;
+    public static final Integer STARTING_CHIPS = 2000;
+
 
     public GameSystem() {
         this.games = new ArrayList<>();
