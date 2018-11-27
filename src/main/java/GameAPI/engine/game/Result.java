@@ -1,10 +1,12 @@
 package GameAPI.engine.game;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class Result {
 
     private Integer userId;
@@ -28,61 +30,26 @@ public class Result {
         this.biggestPotWon = biggestPotWon;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public void incrementNbGamesPlayed() {
+        this.nbGamesPlayed++;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void incrementNbGamesWon() {
+        this.nbGamesWon++;
     }
 
-    public Integer getNbGamesPlayed() {
-        return nbGamesPlayed;
+    public void incrementNbRoundPlayed() {
+        this.nbRoundPlayed++;
     }
 
-    public void setNbGamesPlayed(Integer nbGamesPlayed) {
-        this.nbGamesPlayed = nbGamesPlayed;
-    }
+    public void incrementNbRoundWon() { this.nbRoundWon++; }
 
-    public Integer getNbGamesWon() {
-        return nbGamesWon;
-    }
-
-    public void setNbGamesWon(Integer nbGamesWon) {
-        this.nbGamesWon = nbGamesWon;
-    }
-
-    public Integer getNbRoundPlayed() {
-        return nbRoundPlayed;
-    }
-
-    public void setNbRoundPlayed(Integer nbRoundPlayed) {
-        this.nbRoundPlayed = nbRoundPlayed;
-    }
-
-    public Integer getNbRoundWon() {
-        return nbRoundWon;
-    }
-
-    public void setNbRoundWon(Integer nbRoundWon) {
-        this.nbRoundWon = nbRoundWon;
-    }
-
-    public Integer getTotalEarnedMoney() {
-        return totalEarnedMoney;
-    }
-
-    public void setTotalEarnedMoney(Integer totalEarnedMoney) {
-        this.totalEarnedMoney = totalEarnedMoney;
-    }
-
-    public Integer getBiggestPotWon() {
-        return biggestPotWon;
-    }
+    public void incrementTotalEarnedMoney(Integer totalEarnedMoney) { this.totalEarnedMoney += totalEarnedMoney; }
 
     public void setBiggestPotWon(Integer biggestPotWon) {
         this.biggestPotWon = biggestPotWon;
     }
+
 
     @Override
     public String toString() {

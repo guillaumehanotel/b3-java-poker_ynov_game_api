@@ -58,6 +58,7 @@ public class GameController {
     @ResponseBody
     Game userJoinGame(@RequestBody User user) throws InterruptedException {
         Game game = gameSystem.userAskForGame(user);
+        user.setResult(statsService.getResultsByUserId(user.getId()));
         game.resetFlagAndQueueAndErrors();
         if (game.getGameStatus() == GameStatus.IN_PROGRESS) {
             return game.joinQueue.take();
@@ -104,7 +105,7 @@ public class GameController {
             log.error(e.getMessage());
         }
 
-        return game != null ? game.whenActionProcessed() : null;
+        return game != null ? game.returnActionWhenProcessed() : null;
     }
 
     @RequestMapping(value = "/game/{gameId}/users/{userId}/cards", method = RequestMethod.GET)

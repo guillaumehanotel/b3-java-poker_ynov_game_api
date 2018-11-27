@@ -161,9 +161,7 @@ public class Round {
     public void showDown() {
         log.info("[TURN] SHOWDOWN");
         game.addFlag(GameFlag.SHOWDOWN);
-
         HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult(this);
-
         Integer pot = players.stream().mapToInt(Player::getCurrentBet).sum();
         List<Player> winners = playersByResult.get(PlayerStatus.WINNER);
         Integer earnedMoneyByPlayer = pot / winners.size();

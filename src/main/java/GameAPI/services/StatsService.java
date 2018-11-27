@@ -2,6 +2,7 @@ package GameAPI.services;
 
 import GameAPI.clients.IResultClient;
 import GameAPI.engine.game.Result;
+import GameAPI.engine.user.User;
 import feign.Feign;
 import feign.Logger;
 import feign.gson.GsonDecoder;
@@ -10,6 +11,8 @@ import feign.okhttp.OkHttpClient;
 import feign.slf4j.Slf4jLogger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -42,6 +45,13 @@ public class StatsService {
                 result.getBiggestPotWon(),
                 result.getTotalEarnedMoney()
         );
+    }
+
+    public void incrementUsersNbGamesPlayed(List<User> users) {
+        for (User user : users) {
+            user.incrementNbGamesPlayed();
+            user.setResult(updateResultsByUserId(user.getResult(), user.getId()));
+        }
     }
 
 }

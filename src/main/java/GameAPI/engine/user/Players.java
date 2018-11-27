@@ -58,7 +58,6 @@ public class Players extends ArrayList<Player> {
         return player;
     }
 
-
     /**
      * Modifie l'index de l'ordre de jeu des joueurs
      */
@@ -75,19 +74,16 @@ public class Players extends ArrayList<Player> {
         players.put(PlayerStatus.LOOSER, new ArrayList<>());
 
         if (round.isThereOnePlayingPlayerInRound()) {
-
             Player winner = this.stream().filter(player -> !player.getHasDropped()).findFirst().get();
             List<Player> loosers = this.stream().filter(Player::getHasDropped).collect(Collectors.toList());
             players.get(PlayerStatus.WINNER).add(winner);
             players.get(PlayerStatus.LOOSER).addAll(loosers);
-
         } else {
             Player winner = stream().max(Player::comparesCards).orElse(null);
             for (Player player : this) {
                 Integer compareOutput = player.comparesCards(winner);
                 if (compareOutput == 0) players.get(PlayerStatus.WINNER).add(player);
                 else if (compareOutput == -1) players.get(PlayerStatus.LOOSER).add(player);
-
             }
         }
 

@@ -6,9 +6,11 @@ import GameAPI.engine.user.User;
 import GameAPI.engine.action.ActionGuard;
 import GameAPI.engine.action.ActionManager;
 import GameAPI.engine.card.Card;
+import GameAPI.services.StatsService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Data
 public class Game {
+
+    @Autowired
+    private StatsService statsService;
 
     static final Integer NB_PLAYER_MAX = 2;
 
@@ -40,7 +45,6 @@ public class Game {
     private Integer bigBlind;
     @JsonIgnore
     public BlockingQueue<Game> joinQueue = new LinkedBlockingQueue<>();
-
     /**
      * This field is used as a way to get this when it is ready.
      */
@@ -50,6 +54,7 @@ public class Game {
     private Integer playingPlayerId;
     private Integer playingPlayerCallValue;
     private Integer pot;
+    private Integer winnerId;
     private List<String> errors;
     @JsonIgnore
     private final List<Class<? extends Combination>> combinationTypes = Arrays.asList(
@@ -80,6 +85,7 @@ public class Game {
         this.playingPlayerId = null;
         this.playingPlayerCallValue = null;
         this.pot = 0;
+        this.winnerId = null;
         this.errors = new ArrayList<>();
     }
 
@@ -113,6 +119,7 @@ public class Game {
     private void start() {
         log.info("[GAME " + id + "] START");
         this.gameFlags.add(GameFlag.GAME_STARTED);
+        statsService.incrementUsersNbGamesPlayed(getUsers());
         while (!gameHasWinner()) {
             this.setPot(0);
             Round round = new Round(this);
@@ -121,6 +128,7 @@ public class Game {
         }
         log.info("[GAME " + id + "] FINISHED");
         this.gameStatus = GameStatus.FINISHED;
+        this.winnerId = getNonEliminatedPlayers().get(0).getUser().getId();
         this.markActionAsProcessed();
     }
 
@@ -144,6 +152,11 @@ public class Game {
 
     public User getUserById(Integer userId) {
         return getPlayerByUserId(userId).getUser();
+    }
+
+    @JsonIgnore
+    public List<User> getUsers(){
+        return players.stream().map(Player::getUser).collect(Collectors.toList());
     }
 
     public Player getPlayerByUserId(Integer userId){
@@ -184,7 +197,7 @@ public class Game {
     /**
      * Return this when this has ended to process an action
      */
-    public Game whenActionProcessed() {
+    public Game returnActionWhenProcessed() {
         try {
             return gameQueue.take();
         } catch (InterruptedException e) {
