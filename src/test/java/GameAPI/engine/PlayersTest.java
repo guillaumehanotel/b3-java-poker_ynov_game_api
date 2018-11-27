@@ -67,7 +67,7 @@ class PlayersTest {
   }
 
   @Test
-  void getWinners1() {
+  void getWinnersUnique() {
     players.get(0).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Eight), new Card(Suit.HEART, Rank.Seven)));
     players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
     players.get(2).setDownCards(Arrays.asList(new Card(Suit.DIAMOND, Rank.Eight), new Card(Suit.SPADE, Rank.Seven)));
@@ -77,12 +77,24 @@ class PlayersTest {
   }
 
   @Test
-  void getWinners2() {
+  void getWinnersMultiple() {
     players.get(0).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Eight), new Card(Suit.HEART, Rank.Seven)));
     players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
     players.get(2).setDownCards(Arrays.asList(new Card(Suit.SPADE, Rank.Ace), new Card(Suit.DIAMOND, Rank.Ace)));
     List<Player> actual = players.getPlayersByResult().get(PlayerStatus.WINNER);
     List<Player> expected = Arrays.asList(players.get(1), players.get(2));
     assertArrayEquals(expected.toArray(), actual.toArray());
+  }
+
+  @Test
+  void getWinnerLastNotDropped() {
+    players.get(0).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Eight), new Card(Suit.HEART, Rank.Seven)));
+    players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
+    players.get(2).setDownCards(Arrays.asList(new Card(Suit.DIAMOND, Rank.Eight), new Card(Suit.SPADE, Rank.Seven)));
+    players.get(1).setHasDropped(true);
+    players.get(2).setHasDropped(true);
+    Player actual = players.getPlayersByResult().get(PlayerStatus.WINNER).get(0);
+    Player expected = players.get(0);
+    assertEquals(expected, actual);
   }
 }

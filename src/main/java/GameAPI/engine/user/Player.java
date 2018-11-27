@@ -24,7 +24,7 @@ public class Player {
     private Boolean isEliminated;
     private Boolean hasDropped;
     private Integer currentBet;
-    private Boolean hasPlayTurn;
+    private Boolean hasPlayedTurn;
     @JsonIgnore
     private List<Card> downCards;
     @JsonIgnore
@@ -49,7 +49,7 @@ public class Player {
         this.currentBet = 0;
 
         // lié à un tour
-        this.hasPlayTurn = false;
+        this.hasPlayedTurn = false;
     }
 
     public void resetRound(){
@@ -59,7 +59,7 @@ public class Player {
     }
 
     public void resetTurn(){
-        this.hasPlayTurn = false;
+        this.hasPlayedTurn = false;
     }
 
     public void addCardToHand(Card card) {
@@ -71,19 +71,19 @@ public class Player {
         this.currentBet += amount;
         this.chips -= amount;
         game.setPot(game.getPot() + amount);
-        this.hasPlayTurn = true;
+        this.hasPlayedTurn = true;
     }
 
     public void fold() {
         log.info(this.user.getUsername() + " fold");
         this.hasDropped = true;
-        this.hasPlayTurn = true;
+        this.hasPlayedTurn = true;
     }
 
     public void call(Integer biggestBet) {
         log.info(this.user.getUsername() + " call");
         this.bets(biggestBet - currentBet);
-        this.hasPlayTurn = true;
+        this.hasPlayedTurn = true;
     }
 
     public Boolean hasAllIn(){
@@ -166,7 +166,7 @@ public class Player {
         this.previousDownCards.addAll(downCards);
     }
 
-  public User getUser() {
+    public User getUser() {
     return user;
   }
 }

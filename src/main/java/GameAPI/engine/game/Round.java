@@ -1,15 +1,14 @@
 package GameAPI.engine.game;
 
+import GameAPI.engine.card.Card;
+import GameAPI.engine.card.Deck;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.PlayerStatus;
 import GameAPI.engine.user.Players;
-import GameAPI.engine.card.Card;
-import GameAPI.engine.card.Deck;
 import GameAPI.services.StatsService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -108,7 +107,7 @@ public class Round {
         }
 
         // Dans le cas où tous sauf 1 se couche
-        if (turnNotFinishedCondition()) game.markActionAsProcessed();
+        if (players.haveAllFinishedTurn()) game.markActionAsProcessed();
 
         while (turnNotFinished()) {
             try {
@@ -168,7 +167,7 @@ public class Round {
     public void showDown() {
         log.info("[TURN] SHOWDOWN");
         game.addFlag(GameFlag.SHOWDOWN);
-        HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult(this);
+        HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult();
         creditWinners(playersByResult.get(PlayerStatus.WINNER));
         debitLoosers(playersByResult.get(PlayerStatus.LOOSER));
     }
@@ -205,41 +204,7 @@ public class Round {
     }
 
     private Boolean turnNotFinished() {
-        return turnNotFinishedCondition() && game.getActionManager().playActionIfExist(this);
-    }
-
-    public Boolean turnNotFinishedCondition() {
-        if (isThereOnePlayingPlayerInRound()) {
-            return false;
-        } else {
-            return (!haveAllPlayersPlayed() || !haveAllPlayersEqualBet());
-        }
-    }
-
-    private Boolean haveAllPlayersPlayed() {
-        List<Player> playersStillPlaying = players.stream()
-                .filter(player -> !player.isIgnoredForRound())
-                .collect(Collectors.toList());
-        // todo replace by stream method
-        for (Player player : playersStillPlaying) {
-            if (!player.getHasPlayTurn()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private Boolean haveAllPlayersEqualBet() {
-        return players.stream()
-                .filter(player -> !player.isIgnoredForRound())
-                .map(Player::getCurrentBet)
-                .allMatch(bet -> bet.equals(players.get(0).getCurrentBet()));
-    }
-
-    public Boolean isThereOnePlayingPlayerInRound() {
-        return this.players.stream()
-                .filter(Player::getHasDropped)
-                .count() == Game.NB_PLAYER_MAX - 1;
+        return players.haveAllFinishedTurn() && game.getActionManager().playActionIfExist(this);
     }
 
     public Integer getBiggestBet() {

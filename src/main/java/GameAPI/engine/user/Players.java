@@ -1,12 +1,10 @@
 package GameAPI.engine.user;
 
-import GameAPI.engine.game.Round;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class Players extends ArrayList<Player> {
@@ -68,26 +66,66 @@ public class Players extends ArrayList<Player> {
         this.currentOrderIndex = currentOrderIndex;
     }
 
-    public HashMap<PlayerStatus, List<Player>> getPlayersByResult(Round round) {
+    public HashMap<PlayerStatus, List<Player>> getPlayersByResult() {
+        HashMap<Boolean, List<Player>> playersByDropState = getPlayersByDropState();
+        HashMap<PlayerStatus, List<Player>> players = getPlayersByCardComparisonResult(playersByDropState.get(false));
+        players.get(PlayerStatus.LOOSER).addAll(playersByDropState.get(false));
+        // If only one player left
+        if (playersByDropState.get(false).size() == 1) {
+            Player lastPlayer = playersByDropState.get(false).get(0);
+            players.get(PlayerStatus.WINNER).add(lastPlayer);
+        }
+        return players;
+    }
+
+    private HashMap<PlayerStatus, List<Player>> getPlayersByCardComparisonResult(List<Player> playingPlayers) {
         HashMap<PlayerStatus, List<Player>> players = new HashMap<>();
         players.put(PlayerStatus.WINNER, new ArrayList<>());
         players.put(PlayerStatus.LOOSER, new ArrayList<>());
-
-        if (round.isThereOnePlayingPlayerInRound()) {
-            Player winner = this.stream().filter(player -> !player.getHasDropped()).findFirst().get();
-            List<Player> loosers = this.stream().filter(Player::getHasDropped).collect(Collectors.toList());
-            players.get(PlayerStatus.WINNER).add(winner);
-            players.get(PlayerStatus.LOOSER).addAll(loosers);
-        } else {
-            Player winner = stream().max(Player::comparesCards).orElse(null);
-            for (Player player : this) {
+        Player winner = stream().max(Player::comparesCards).orElse(null);
+        if (playingPlayers != null)
+            for (Player player : playingPlayers) {
                 Integer compareOutput = player.comparesCards(winner);
                 if (compareOutput == 0) players.get(PlayerStatus.WINNER).add(player);
                 else if (compareOutput == -1) players.get(PlayerStatus.LOOSER).add(player);
             }
-        }
-
         return players;
+    }
+
+    private HashMap<Boolean, List<Player>> getPlayersByDropState() {
+        return stream().collect(
+            HashMap::new,
+            (hashMap, player) -> {
+                hashMap.putIfAbsent(player.getHasDropped(), new ArrayList<>());
+                hashMap.get(player.getHasDropped()).add(player);
+            },
+            HashMap::putAll
+        );
+    }
+
+    private Boolean allPlayersHaveDroppedExceptOne() {
+        return stream().filter(player -> !player.getHasDropped()).count() == 1;
+    }
+
+    private Boolean haveAllPlayed() {
+        return stream()
+            .filter(player -> !player.isIgnoredForRound())
+            .allMatch(Player::getHasPlayedTurn);
+    }
+
+    private Boolean haveAllEqualBet() {
+        return stream()
+            .filter(player -> !player.isIgnoredForRound())
+            .map(Player::getCurrentBet)
+            .allMatch(bet -> bet.equals(get(0).getCurrentBet()));
+    }
+
+    public Boolean haveAllFinishedTurn() {
+        if (allPlayersHaveDroppedExceptOne()) {
+            return false;
+        } else {
+            return (!haveAllPlayed() || !haveAllEqualBet());
+        }
     }
 
 }
