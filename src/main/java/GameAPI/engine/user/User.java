@@ -15,6 +15,7 @@ public class User {
     private String email;
     private String username;
     private Integer money;
+    @JsonIgnore
     Result result;
 
     public User(String email, String username, Integer money) {
