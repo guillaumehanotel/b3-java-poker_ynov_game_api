@@ -5,9 +5,11 @@ import GameAPI.engine.user.PlayerStatus;
 import GameAPI.engine.user.Players;
 import GameAPI.engine.card.Card;
 import GameAPI.engine.card.Deck;
+import GameAPI.services.StatsService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @Data
 @Slf4j
 public class Round {
+
+    StatsService statsService;
 
     @JsonIgnore
     private Game game;
@@ -29,6 +33,7 @@ public class Round {
     private List<Integer> winnerIds = new ArrayList<>();
 
     public Round(Game game) {
+        this.statsService = new StatsService();
         this.game = game;
         this.deck = new Deck();
         this.players = new Players();
@@ -162,20 +167,44 @@ public class Round {
         log.info("[TURN] SHOWDOWN");
         game.addFlag(GameFlag.SHOWDOWN);
         HashMap<PlayerStatus, List<Player>> playersByResult = players.getPlayersByResult(this);
-        Integer pot = players.stream().mapToInt(Player::getCurrentBet).sum();
-        List<Player> winners = playersByResult.get(PlayerStatus.WINNER);
+        creditWinners(playersByResult.get(PlayerStatus.WINNER));
+        debitLoosers(playersByResult.get(PlayerStatus.LOOSER));
+    }
+
+    private void creditWinners(List<Player> winners) {
+        Integer pot = getPot();
         Integer earnedMoneyByPlayer = pot / winners.size();
         for (Player player : winners) {
             player.win(earnedMoneyByPlayer);
+            //insertUserResult(player, earnedMoneyByPlayer);
             winnerIds.add(player.getUser().getId());
         }
-        playersByResult.get(PlayerStatus.LOOSER).forEach(Player::loose);
+    }
+
+    private void debitLoosers(List<Player> loosers) {
+        for (Player looser : loosers) {
+            looser.loose();
+            //insertUserResult(looser, looser.getCurrentBet());
+        }
+    }
+
+    private void insertUserResult(Player player, Integer moneyWon) {
+        statsService.createResults(
+                player.getUser().getId(),
+                game.getId(),
+                moneyWon,
+                new Date(),
+                player.getCombination()
+        );
+    }
+
+    private Integer getPot() {
+        return players.stream().mapToInt(Player::getCurrentBet).sum();
     }
 
     private Boolean turnNotFinished() {
         return turnNotFinishedCondition() && game.getActionManager().playActionIfExist(this);
     }
-
 
     public Boolean turnNotFinishedCondition() {
         if (isThereOnePlayingPlayerInRound()) {

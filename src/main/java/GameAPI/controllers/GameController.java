@@ -7,26 +7,16 @@ import GameAPI.engine.card.Card;
 import GameAPI.engine.game.Game;
 import GameAPI.engine.game.GameStatus;
 import GameAPI.engine.game.GameSystem;
-import GameAPI.engine.game.Result;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.User;
 import GameAPI.engine.user.UserCards;
-import GameAPI.services.StatsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Classe Controller qui a pour but de recevoir les actions qui viennent du front
- * et d'éxecuter l'action passé dans le body en vérifiant que :
- * 1- une action est bien attendu
- * 2- le user à l'origine de l'action est bien celui qui doit jouer
- */
 @RestController
 @Slf4j
 public class GameController {
@@ -34,26 +24,11 @@ public class GameController {
     @Autowired
     private GameSystem gameSystem;
 
-    @Autowired
-    private StatsService statsService;
-
-    @RequestMapping(value = "/users/{userId}/stats", method = RequestMethod.GET)
-    ResponseEntity<Result> getUserStats(@PathVariable Integer userId) {
-        return new ResponseEntity<>(statsService.getResultsByUserId(userId), HttpStatus.OK);
-    }
-
-    /**
-     * Get starting chips
-     */
     @RequestMapping(value = "/game/startingChips", method = RequestMethod.GET)
     Integer getStartingChips() {
         return GameSystem.STARTING_CHIPS;
     }
 
-
-    /**
-     * Un user demande à rejoindre une partie
-     */
     @RequestMapping(value = "/users/join", method = RequestMethod.POST)
     @ResponseBody
     Game userJoinGame(@RequestBody User user) throws InterruptedException {
@@ -91,7 +66,6 @@ public class GameController {
                 if (checkGameActionGuard(game, user)) {
                     game.getActionManager().saveAction(action);
                 } else {
-
                     game.markActionAsProcessed();
                 }
 

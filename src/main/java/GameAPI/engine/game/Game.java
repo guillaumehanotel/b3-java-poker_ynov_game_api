@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 @Data
 public class Game {
 
-    private StatsService statsService;
-
     static final Integer NB_PLAYER_MAX = 2;
 
     private static Integer nbGame = 0;
@@ -71,7 +69,6 @@ public class Game {
 
     public Game() {
         this.id = ++Game.nbGame;
-        this.statsService = new StatsService();
         this.gameFlags = new ArrayList<>();
         this.gameStatus = GameStatus.STARTING_PENDING;
         this.players = new ArrayList<>();
@@ -88,7 +85,6 @@ public class Game {
         this.winnerId = null;
         this.errors = new ArrayList<>();
     }
-
 
     void addPlayer(User user) throws Exception {
         if (!checkIfUserIsAlreadyInGame(user)) {
@@ -123,12 +119,19 @@ public class Game {
         }
         log.info("[GAME " + id + "] FINISHED");
         this.gameStatus = GameStatus.FINISHED;
-        this.winnerId = getNonEliminatedPlayers().get(0).getUser().getId();
+        this.winnerId = getWinner().getId();
         this.markActionAsProcessed();
     }
 
     private Boolean gameHasWinner() {
         return getNonEliminatedPlayers().size() == 1;
+    }
+
+    private User getWinner(){
+        if(getNonEliminatedPlayers().size() == 0 || getNonEliminatedPlayers().size() > 1){
+            throw new IllegalStateException("Cannot get winner for the game " + this.id);
+        }
+        return getNonEliminatedPlayers().get(0).getUser();
     }
 
     @JsonIgnore

@@ -1,6 +1,5 @@
 package GameAPI.clients;
 
-
 import GameAPI.engine.game.Result;
 import feign.Body;
 import feign.Headers;
@@ -9,38 +8,31 @@ import feign.RequestLine;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 @FeignClient("ResultClient")
 public interface IResultClient {
 
-    @RequestLine("GET /{userId}")
+    @RequestLine("GET /results?userId={userId}")
     Result getResultsByUserId(@Param("userId") Integer userId);
+
+    @RequestLine("GET /results?gameId={gameId}")
+    Result getResultsByGameId(@Param("gameId") Integer userId);
 
     @RequestLine("POST /")
     @Headers("Content-Type: application/json")
     @Body("%7B" +
-            "\"userId\": \"{userId}\"" +
-            "%7D")
-    Result createResults(@Param("userId") Integer userId);
-
-    @RequestLine("PUT /{userId}")
-    @Headers("Content-Type: application/json")
-    @Body("%7B" +
             "\"userId\": \"{userId}\", " +
-            "\"nbGamesPlayed\": \"{nbGamesPlayed}\", " +
-            "\"nbGamesWon\": \"{nbGamesWon}\", " +
-            "\"nbRoundPlayed\": \"{nbRoundPlayed}\", " +
-            "\"nbRoundWon\": \"{nbRoundWon}\", " +
-            "\"totalEarnedMoney\": \"{totalEarnedMoney}\", " +
-            "\"biggestPotWon\": \"{biggestPotWon}\"" +
+            "\"gameId\": \"{gameId}\", " +
+            "\"money_won\": \"{money_won}\", " +
+            "\"date\": \"{date}\", " +
+            "\"combinaison\": \"{combinaison}\" " +
             "%7D")
-    Result updateResultsByUserId(@Param("userId") Integer userId,
-                                 @Param("nbGamesPlayed") Integer nbGamesPlayed,
-                                 @Param("nbGamesWon") Integer nbGamesWon,
-                                 @Param("nbRoundPlayed") Integer nbRoundPlayed,
-                                 @Param("nbRoundWon") Integer nbRoundWon,
-                                 @Param("totalEarnedMoney") Integer totalEarnedMoney,
-                                 @Param("biggestPotWon") Integer biggestPotWon);
-
+    Result createResult(@Param("userId") Integer userId,
+                        @Param("gameId") Integer gameId,
+                        @Param("money_won") Integer moneyWon,
+                        @Param("date") Date date,
+                        @Param("combinaison") String combinaison);
 
 }

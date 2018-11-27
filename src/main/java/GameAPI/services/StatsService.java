@@ -2,7 +2,6 @@ package GameAPI.services;
 
 import GameAPI.clients.IResultClient;
 import GameAPI.engine.game.Result;
-import GameAPI.engine.user.User;
 import feign.Feign;
 import feign.Logger;
 import feign.gson.GsonDecoder;
@@ -12,7 +11,7 @@ import feign.slf4j.Slf4jLogger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -24,34 +23,14 @@ public class StatsService {
             .decoder(new GsonDecoder())
             .logger(new Slf4jLogger(IResultClient.class))
             .logLevel(Logger.Level.FULL)
-            .target(IResultClient.class, "http://localhost:8082/results");
-
+            .target(IResultClient.class, "http://localhost:8082");
 
     public Result getResultsByUserId(Integer id) {
         return iResultClient.getResultsByUserId(id);
     }
 
-    public Result createResults(Integer id) {
-        return iResultClient.createResults(id);
-    }
-
-    public Result updateResultsByUserId(Result result, Integer id) {
-        return iResultClient.updateResultsByUserId(
-                result.getUserId(),
-                result.getNbGamesPlayed(),
-                result.getNbGamesWon(),
-                result.getNbRoundPlayed(),
-                result.getNbRoundWon(),
-                result.getBiggestPotWon(),
-                result.getTotalEarnedMoney()
-        );
-    }
-
-    public void incrementUsersNbGamesPlayed(List<User> users) {
-        for (User user : users) {
-            user.getResult().incrementNbGamesPlayed();
-            user.setResult(updateResultsByUserId(user.getResult(), user.getId()));
-        }
+    public Result createResults(Integer userId, Integer gameId, Integer moneyWon, Date date, String combinaison) {
+        return iResultClient.createResult(userId, gameId, moneyWon, date, combinaison);
     }
 
 }
