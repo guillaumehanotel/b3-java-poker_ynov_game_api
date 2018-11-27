@@ -56,14 +56,14 @@ public class GameController {
         try {
             game = gameSystem.getGameById(gameId);
 
-            if (checkAction(action)) {
+            if (action.isValid()) {
 
                 log.info("[ACTION RECEIVED : " + action.toString() + "]");
 
                 User user = game.getUserById(action.getUserId());
                 game.resetFlagAndQueueAndErrors();
 
-                if (checkGameActionGuard(game, user)) {
+                if (game.waitsActionFromUser(user)) {
                     game.getActionManager().saveAction(action);
                 } else {
                     game.markActionAsProcessed();
@@ -78,7 +78,7 @@ public class GameController {
             log.error(e.getMessage());
         }
 
-        return game != null ? game.returnActionWhenProcessed() : null;
+        return game != null ? game.returnWhenActionProcessed() : null;
     }
 
     @RequestMapping(value = "/game/{gameId}/users/{userId}/cards", method = RequestMethod.GET)
@@ -102,76 +102,4 @@ public class GameController {
         Game game = gameSystem.getGameById(gameId);
         return game.getLastCommunityCards();
     }
-
-    /**
-     * Vérifie que'une action reçue possède bien les champs requis
-     */
-    private Boolean checkAction(Action action) {
-        Boolean check = true;
-        if (action.getGameId() == null) {
-            check = false;
-            log.error("Missing gameId of Action");
-        }
-        if (action.getUserId() == null) {
-            check = false;
-            log.error("Missing userId of Action");
-        }
-        if (action.getActionType() == null) {
-            check = false;
-            log.error("Missing actionType of Action");
-        } else {
-            check = this.checkActionTypeParameter(action);
-        }
-        return check;
-    }
-
-    /**
-     * Vérifie que'une action possède bien une valeur dans le cas où l'action serait BET
-     */
-    private Boolean checkActionTypeParameter(Action action) {
-        Boolean check = true;
-        if (action.getActionType() == ActionType.BET) {
-            if (action.getValue() == null) {
-                check = false;
-                log.error("Missing value for action BET");
-            }
-        }
-        return check;
-    }
-
-    /**
-     * Récupère le système de protection du jeu passé en paramètre vérifie si une action est attendue et
-     * si le user à l'origine de l'action est valide
-     */
-    private Boolean checkGameActionGuard(Game game, User user) {
-        return isActionExpected(game) && isUserValid(game, user);
-    }
-
-    /**
-     * Vérifie que le user à l'origine de l'action est bien attendue
-     */
-    private Boolean isUserValid(Game game, User user) {
-        ActionGuard actionGuard = game.getActionGuard();
-        if (actionGuard.getUserId().equals(user.getId())) {
-            return true;
-        } else {
-            game.addError("Action forbidden for User n°" + user.getId() + " : " + user.getUsername());
-            return false;
-        }
-    }
-
-    /**
-     * Vérifie d'une action est attendue
-     */
-    private Boolean isActionExpected(Game game) {
-        ActionGuard actionGuard = game.getActionGuard();
-        if (actionGuard.getActionExpected()) {
-            return true;
-        } else {
-            game.addError("The game doesn't wait an action");
-            return false;
-        }
-    }
-
-
 }

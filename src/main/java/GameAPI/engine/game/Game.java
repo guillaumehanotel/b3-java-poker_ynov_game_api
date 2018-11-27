@@ -6,11 +6,9 @@ import GameAPI.engine.user.User;
 import GameAPI.engine.action.ActionGuard;
 import GameAPI.engine.action.ActionManager;
 import GameAPI.engine.card.Card;
-import GameAPI.services.StatsService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,11 +150,6 @@ public class Game {
         return getPlayerByUserId(userId).getUser();
     }
 
-    @JsonIgnore
-    public List<User> getUsers(){
-        return players.stream().map(Player::getUser).collect(Collectors.toList());
-    }
-
     public Player getPlayerByUserId(Integer userId){
         List<Player> resultUserList = players.stream()
                 .filter(player -> player.getUser().getId().equals(userId))
@@ -195,7 +188,7 @@ public class Game {
     /**
      * Return this when this has ended to process an action
      */
-    public Game returnActionWhenProcessed() {
+    public Game returnWhenActionProcessed() {
         try {
             return gameQueue.take();
         } catch (InterruptedException e) {
@@ -215,5 +208,35 @@ public class Game {
 
     public List<Class<? extends Combination>> getCombinationTypes() {
         return combinationTypes;
+    }
+
+    /**
+     * Vérifie d'une action est attendue
+     */
+    public Boolean isActionExpected() {
+        ActionGuard actionGuard = getActionGuard();
+        if (actionGuard.getAnActionIsExpected()) {
+            return true;
+        } else {
+            addError("The game doesn't wait an action");
+            return false;
+        }
+    }
+
+    /**
+     * Vérifie que le user à l'origine de l'action est bien attendue
+     */
+    public Boolean isUserValid(User user) {
+        ActionGuard actionGuard = getActionGuard();
+        if (actionGuard.getUserId().equals(user.getId())) {
+            return true;
+        } else {
+            addError("Action forbidden for User n°" + user.getId() + " : " + user.getUsername());
+            return false;
+        }
+    }
+
+    public Boolean waitsActionFromUser(User user) {
+        return isActionExpected() && isUserValid(user);
     }
 }
