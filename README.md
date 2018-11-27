@@ -98,3 +98,22 @@ Returns the downcards of the previous round for the users for a game.
 | ---- | ----------- |
 | 200 | return game |
 | 500 | Internal server error |
+
+### /game/{gameId}/previous/communitycards
+
+---
+##### ***GET***
+
+Returns the community cards of the previous round for a game.
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| gameId | path | Game Id | Yes | number |
+
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | return game |
+| 500 | Internal server error |

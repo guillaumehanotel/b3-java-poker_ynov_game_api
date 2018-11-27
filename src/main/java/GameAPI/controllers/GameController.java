@@ -97,6 +97,12 @@ public class GameController {
         return userCards;
     }
 
+    @RequestMapping(value = "/game/{gameId}/previous/communitycards")
+    List<Card> getPreviousCommunityCards(@PathVariable Integer gameId) {
+        Game game = gameSystem.getGameById(gameId);
+        return game.getLastCommunityCards();
+    }
+
     /**
      * Vérifie que'une action reçue possède bien les champs requis
      */

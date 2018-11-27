@@ -106,6 +106,8 @@ public class Round {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        // Dans le cas où tous sauf 1 se couche
         if (turnNotFinishedCondition()) game.markActionAsProcessed();
 
         while (turnNotFinished()) {
