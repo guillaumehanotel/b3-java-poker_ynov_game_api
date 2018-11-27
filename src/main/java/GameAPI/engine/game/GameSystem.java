@@ -25,11 +25,6 @@ public class GameSystem {
         this.games = new ArrayList<>();
     }
 
-
-    /**
-     * Fonction appelé lorsqu'un utilisateur clique sur 'lance une partie',
-     * Fait rejoindre un user à une partie
-     */
     public Game userAskForGame(User user) {
         Game game = this.findGameForUser();
         try {
@@ -66,9 +61,6 @@ public class GameSystem {
         return game;
     }
 
-    /**
-     * Récupère toutes les parties en attente de la liste des parties
-     */
     private List<Game> getWaitingGames() {
         return games.stream().filter(game -> game.getGameStatus() == GameStatus.STARTING_PENDING).collect(Collectors.toList());
     }

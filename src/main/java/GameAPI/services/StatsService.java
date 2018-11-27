@@ -11,7 +11,9 @@ import feign.slf4j.Slf4jLogger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 @Service
 @Slf4j
@@ -30,7 +32,13 @@ public class StatsService {
     }
 
     public Result createResults(Integer userId, Integer gameId, Integer moneyWon, Date date, String combinaison) {
-        return iResultClient.createResult(userId, gameId, moneyWon, date, combinaison);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        String formattedDate = sdf.format(date);
+        log.info("userId : " + userId);
+        log.info("gameId : " + gameId);
+        log.info("date : " + gameId);
+        return iResultClient.createResult(userId, gameId, moneyWon, formattedDate, combinaison);
     }
 
 }
