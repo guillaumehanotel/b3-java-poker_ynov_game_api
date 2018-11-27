@@ -91,7 +91,7 @@ public class Player {
         this.hasPlayedTurn = true;
     }
 
-    public Boolean hasAllIn(){
+    private Boolean hasAllIn(){
         return currentBet.equals(chips + currentBet);
     }
 
@@ -102,7 +102,7 @@ public class Player {
      * - il a misé tout ses jetons (all-in)
      */
     @JsonIgnore
-    public Boolean isIgnoredForRound(){
+    Boolean isIgnoredForRound(){
         if(!isEliminated){
             return hasAllIn() || hasDropped;
         } else {
@@ -115,7 +115,7 @@ public class Player {
         return "player" + user.getUsername();
     }
 
-    public Integer comparesCards(Player player) {
+    Integer comparesCards(Player player) {
         Combination bestCombination = getBestCombination();
         Combination playerBestCombination = player.getBestCombination();
         if (bestCombination == null && playerBestCombination == null) return 0;
@@ -151,13 +151,16 @@ public class Player {
         log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
         this.combination = _combination != null ? _combination.toString() : null;
+        log.info("Winning combination : " + _combination);
         this.earnedMoney = earnedMoney;
     }
 
     public void loose() {
         log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
         this.combination = _combination != null ? _combination.toString() : null;
+        log.info("Loosing combination : " + _combination);
         if(this.chips == 0){
+            log.info(this + " is eliminated");
             this.isEliminated = true;
         }
     }

@@ -61,9 +61,9 @@ public class Players extends ArrayList<Player> {
      */
     public void setCurrentOrderIndex(Integer currentOrderIndex) {
         if (currentOrderIndex >= this.size()) {
-            throw new RuntimeException("CurrentIndex too big");
+            log.info("CurrentIndex too big " + currentOrderIndex + " transform to " + currentOrderIndex % size());
         }
-        this.currentOrderIndex = currentOrderIndex;
+        this.currentOrderIndex = currentOrderIndex % size();
     }
 
     public HashMap<PlayerStatus, List<Player>> getPlayersByResult() {

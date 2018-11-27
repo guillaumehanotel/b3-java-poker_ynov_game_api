@@ -1,11 +1,11 @@
 package GameAPI.engine.game;
 
-import GameAPI.engine.card.combinations.*;
-import GameAPI.engine.user.Player;
-import GameAPI.engine.user.User;
 import GameAPI.engine.action.ActionGuard;
 import GameAPI.engine.action.ActionManager;
 import GameAPI.engine.card.Card;
+import GameAPI.engine.card.combinations.*;
+import GameAPI.engine.user.Player;
+import GameAPI.engine.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Data
 public class Game {
 
-    static final Integer NB_PLAYER_MAX = 2;
+    static final Integer NB_PLAYER_MAX = 4;
 
     private static Integer nbGame = 0;
 
@@ -65,33 +65,33 @@ public class Game {
         RoyalFlush.class
     );
 
-    public Game() {
-        this.id = ++Game.nbGame;
-        this.gameFlags = new ArrayList<>();
-        this.gameStatus = GameStatus.STARTING_PENDING;
-        this.players = new ArrayList<>();
-        this.startingChips = GameSystem.STARTING_CHIPS;
-        this.actionGuard = new ActionGuard();
-        this.actionManager = new ActionManager(this);
-        this.dealerPosition = 0;
-        this.bigBlind = this.startingChips / 100;
-        this.smallBlind = this.bigBlind / 2;
-        this.rounds = new ArrayList<>();
-        this.playingPlayerId = null;
-        this.playingPlayerCallValue = null;
-        this.pot = 0;
-        this.winnerId = null;
-        this.errors = new ArrayList<>();
+    Game() {
+        id = ++Game.nbGame;
+        gameFlags = new ArrayList<>();
+        gameStatus = GameStatus.STARTING_PENDING;
+        players = new ArrayList<>();
+        startingChips = GameSystem.STARTING_CHIPS;
+        actionGuard = new ActionGuard();
+        actionManager = new ActionManager(this);
+        dealerPosition = 0;
+        bigBlind = this.startingChips / 100;
+        smallBlind = this.bigBlind / 2;
+        rounds = new ArrayList<>();
+        playingPlayerId = null;
+        playingPlayerCallValue = null;
+        pot = 0;
+        winnerId = null;
+        errors = new ArrayList<>();
     }
 
     void addPlayer(User user) throws Exception {
         if (!checkIfUserIsAlreadyInGame(user)) {
-            this.players.add(new Player(user, startingChips, this));
+            players.add(new Player(user, startingChips, this));
             user.setMoney(user.getMoney() - startingChips);
-            log.info("Player [" + user.getUsername() + "] join the game n°" + this.getId());
+            log.info("Player [" + user.getUsername() + "] join the game n°" + getId());
             startGameIfAllPlayersHere();
         } else {
-            throw new Exception("User " + user.getUsername() + " already in game " + this.getId() + " ! ");
+            throw new Exception("User " + user.getUsername() + " already in game " + getId() + " ! ");
         }
     }
 
@@ -108,20 +108,20 @@ public class Game {
 
     private void start() {
         log.info("[GAME " + id + "] START");
-        this.gameFlags.add(GameFlag.GAME_STARTED);
-        while (!gameHasWinner()) {
-            this.setPot(0);
+        gameFlags.add(GameFlag.GAME_STARTED);
+        while (!hasWinner()) {
+            setPot(0);
             Round round = new Round(this);
-            this.rounds.add(round);
+            rounds.add(round);
             round.start();
         }
         log.info("[GAME " + id + "] FINISHED");
-        this.gameStatus = GameStatus.FINISHED;
-        this.winnerId = getWinner().getId();
-        this.markActionAsProcessed();
+        gameStatus = GameStatus.FINISHED;
+        winnerId = getWinner().getId();
+        markActionAsProcessed();
     }
 
-    private Boolean gameHasWinner() {
+    private Boolean hasWinner() {
         return getNonEliminatedPlayers().size() == 1;
     }
 
@@ -134,7 +134,7 @@ public class Game {
 
     @JsonIgnore
     public List<Player> getNonEliminatedPlayers() {
-        return this.players.stream()
+        return players.stream()
                 .filter(player -> !player.getIsEliminated())
                 .collect(Collectors.toList());
     }
@@ -213,7 +213,7 @@ public class Game {
     /**
      * Vérifie d'une action est attendue
      */
-    public Boolean isActionExpected() {
+    private Boolean isActionExpected() {
         ActionGuard actionGuard = getActionGuard();
         if (actionGuard.getAnActionIsExpected()) {
             return true;
@@ -226,7 +226,7 @@ public class Game {
     /**
      * Vérifie que le user à l'origine de l'action est bien attendue
      */
-    public Boolean isUserValid(User user) {
+    private Boolean isUserValid(User user) {
         ActionGuard actionGuard = getActionGuard();
         if (actionGuard.getUserId().equals(user.getId())) {
             return true;

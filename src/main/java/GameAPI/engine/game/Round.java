@@ -31,7 +31,7 @@ public class Round {
     private TurnPhase currentTurnPhase;
     private List<Integer> winnerIds = new ArrayList<>();
 
-    public Round(Game game) {
+    Round(Game game) {
         this.statsService = new StatsService();
         this.game = game;
         this.deck = new Deck();
@@ -41,7 +41,7 @@ public class Round {
         this.currentTurnPhase = TurnPhase.PREFLOP;
     }
 
-    public void start() {
+    void start() {
         log.info("[ROUND] START");
         game.addFlag(GameFlag.NEW_ROUND);
         init();
@@ -80,10 +80,10 @@ public class Round {
         int i = 0;
         int nbPhase = TurnPhase.values().length;
 
-        this.startTurn();
+        startTurn();
         while (i != nbPhase - 1) {
-            this.currentTurnPhase = this.currentTurnPhase.getNextPhase();
-            this.startTurn();
+            currentTurnPhase = currentTurnPhase.getNextPhase();
+            startTurn();
             i++;
         }
     }
