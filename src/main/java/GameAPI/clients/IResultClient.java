@@ -14,13 +14,13 @@ import java.util.Date;
 @FeignClient("ResultClient")
 public interface IResultClient {
 
-    @RequestLine("GET /results?userId={userId}")
+    @RequestLine("GET /results/users/{userId}")
     Result getResultsByUserId(@Param("userId") Integer userId);
 
-    @RequestLine("GET /results?gameId={gameId}")
+    @RequestLine("GET /results/games/{gameId}")
     Result getResultsByGameId(@Param("gameId") Integer userId);
 
-    @RequestLine("POST /")
+    @RequestLine("POST /results")
     @Headers("Content-Type: application/json")
     @Body("%7B" +
             "\"userId\": \"{userId}\", " +
@@ -32,7 +32,7 @@ public interface IResultClient {
     Result createResult(@Param("userId") Integer userId,
                         @Param("gameId") Integer gameId,
                         @Param("money_won") Integer moneyWon,
-                        @Param("date") Date date,
+                        @Param("date") String date,
                         @Param("combinaison") String combinaison);
 
 }
