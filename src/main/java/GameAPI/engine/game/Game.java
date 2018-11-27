@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @Data
 public class Game {
 
-    @Autowired
     private StatsService statsService;
 
     static final Integer NB_PLAYER_MAX = 2;
@@ -71,7 +70,8 @@ public class Game {
     );
 
     public Game() {
-        incrementGameId();
+        this.id = ++Game.nbGame;
+        this.statsService = new StatsService();
         this.gameFlags = new ArrayList<>();
         this.gameStatus = GameStatus.STARTING_PENDING;
         this.players = new ArrayList<>();
@@ -89,10 +89,6 @@ public class Game {
         this.errors = new ArrayList<>();
     }
 
-    private void incrementGameId() {
-        Game.nbGame++;
-        this.id = Game.nbGame;
-    }
 
     void addPlayer(User user) throws Exception {
         if (!checkIfUserIsAlreadyInGame(user)) {
@@ -119,7 +115,6 @@ public class Game {
     private void start() {
         log.info("[GAME " + id + "] START");
         this.gameFlags.add(GameFlag.GAME_STARTED);
-        statsService.incrementUsersNbGamesPlayed(getUsers());
         while (!gameHasWinner()) {
             this.setPot(0);
             Round round = new Round(this);

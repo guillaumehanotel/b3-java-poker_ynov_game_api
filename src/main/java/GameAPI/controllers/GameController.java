@@ -58,7 +58,6 @@ public class GameController {
     @ResponseBody
     Game userJoinGame(@RequestBody User user) throws InterruptedException {
         Game game = gameSystem.userAskForGame(user);
-        user.setResult(statsService.getResultsByUserId(user.getId()));
         game.resetFlagAndQueueAndErrors();
         if (game.getGameStatus() == GameStatus.IN_PROGRESS) {
             return game.joinQueue.take();

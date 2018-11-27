@@ -49,7 +49,7 @@ public class StatsService {
 
     public void incrementUsersNbGamesPlayed(List<User> users) {
         for (User user : users) {
-            user.incrementNbGamesPlayed();
+            user.getResult().incrementNbGamesPlayed();
             user.setResult(updateResultsByUserId(user.getResult(), user.getId()));
         }
     }
