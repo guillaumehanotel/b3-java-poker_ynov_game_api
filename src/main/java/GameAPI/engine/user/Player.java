@@ -83,7 +83,7 @@ public class Player {
     public void call(Integer biggestBet) {
         log.info(this.user.getUsername() + " call");
         // si on a pas assez pour suivre, on mise tout ce qui nous reste
-        if(biggestBet - currentBet > chips){
+        if(biggestBet - currentBet < chips){
             this.bets(biggestBet - currentBet);
         } else {
             this.bets(chips);

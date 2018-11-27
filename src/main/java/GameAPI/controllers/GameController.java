@@ -91,9 +91,17 @@ public class GameController {
     List<UserCards> getPreviousUsersDowncards(@PathVariable Integer gameId) {
         List<UserCards> userCards = new ArrayList<>();
         Game game = gameSystem.getGameById(gameId);
-        for (Player player : game.getNonEliminatedPlayers()) {
-            userCards.add(new UserCards(player.getUser().getId(), player.getPreviousDownCards()));
+        if(game.getGameStatus() == GameStatus.IN_PROGRESS){
+            for (Player player : game.getNonEliminatedPlayers()) {
+                userCards.add(new UserCards(player.getUser().getId(), player.getPreviousDownCards()));
+            }
+        } else if(game.getGameStatus() == GameStatus.FINISHED) {
+            // on ne filtre pas les joueurs éliminés
+            for (Player player : game.getPlayers()) {
+                userCards.add(new UserCards(player.getUser().getId(), player.getDownCards()));
+            }
         }
+
         return userCards;
     }
 
