@@ -25,6 +25,7 @@ public class Game {
     static final Integer NB_PLAYER_MAX = 3;
     static final Integer DELAY = 500;
 
+
     private static Integer nbGame = 0;
 
     private Integer id;

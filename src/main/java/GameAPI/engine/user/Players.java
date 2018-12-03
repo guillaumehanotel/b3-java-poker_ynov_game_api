@@ -114,8 +114,8 @@ public class Players extends ArrayList<Player> {
 
     public Boolean haveAllPlayed() {
         return stream()
-                .filter(player -> !player.isIgnoredForRound())
-                .allMatch(Player::hasPlayedTurn);
+            .filter(player -> !player.isIgnoredForRound())
+            .allMatch(Player::hasPlayedTurn);
     }
 
     public Boolean haveAllEqualBet() {
@@ -129,7 +129,6 @@ public class Players extends ArrayList<Player> {
         else
             return players.stream().allMatch(players.get(0)::equals);
     }
-
 
     /**
      * Si le nb de joueurs ignorés est égale au nb total de joueur

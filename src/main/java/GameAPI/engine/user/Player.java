@@ -125,8 +125,12 @@ public class Player {
      * - il a misé tout ses jetons (all-in)
      */
     @JsonIgnore
-    Boolean isIgnoredForRound(){
-        return isEliminated || hasAllIn() || hasDropped;
+    public Boolean isIgnoredForRound() {
+        if (!isEliminated) {
+            return hasAllIn() || hasDropped;
+        } else {
+            return true;
+        }
     }
 
     @Override
@@ -176,7 +180,7 @@ public class Player {
     }
 
     @JsonIgnore
-    private Combination getBestCombination() {
+    public Combination getBestCombination() {
         List<Combination> combinations = new ArrayList<>();
         Cards allCards = getAllCards();
         for (Class<? extends Combination> possibleCombination : game.getCombinationTypes()) {

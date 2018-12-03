@@ -40,13 +40,11 @@ public class ActionManager {
     private void playAction(Round round) {
         executeAction(round);
         deregisterAction();
-
         // Si le tour n'est pas fini, le jeu ne peut pas plus avancer à ce point et on peut retourner le jeu pour attendre la prochaine action
         if (!round.getCurrentTurn().isFinished()){
             game.markActionAsProcessed();
             round.passToNextPlayerAndWaitAction();
         }
-
     }
 
     private void executeAction(Round round) {
