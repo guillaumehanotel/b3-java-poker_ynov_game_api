@@ -119,7 +119,10 @@ public class Players extends ArrayList<Player> {
     }
 
     public Boolean haveAllEqualBet() {
-        List<Integer> players = stream().filter(player -> !player.isIgnoredForRound()).map(Player::getCurrentBet).collect(Collectors.toList());
+        List<Integer> players = stream()
+            .filter(player -> !player.isIgnoredForRound())
+            .map(Player::getCurrentBet)
+            .collect(Collectors.toList());
         return players.stream().allMatch(players.get(0)::equals);
     }
 

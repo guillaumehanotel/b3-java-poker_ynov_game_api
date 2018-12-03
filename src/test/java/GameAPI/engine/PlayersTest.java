@@ -94,7 +94,7 @@ class PlayersTest {
     players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
     players.get(2).setDownCards(Arrays.asList(new Card(Suit.DIAMOND, Rank.Eight), new Card(Suit.SPADE, Rank.Seven)));
     List<Player> actual = players.getPlayersByResult().get(PlayerStatus.LOOSER);
-    List<Player> expected = Arrays.asList(players.get(1), players.get(2));
+    List<Player> expected = Arrays.asList(players.get(0), players.get(2));
     assertArrayEquals(expected.toArray(), actual.toArray());
   }
 
@@ -105,5 +105,43 @@ class PlayersTest {
     Player expected = players.get(1);
     Player actual = players.getNextPlayingPlayer();
     assertEquals(expected, actual);
+  }
+
+  @Test
+  void haveAllFoldExceptOne() {
+    players.get(0).fold();
+    players.get(1).fold();
+    assertEquals(true, players.haveAllFoldExceptOne());
+  }
+
+  @Test
+  void haveAllPlayed() {
+    for (Player player : players) {
+      player.setHasPlayedTurn(true);
+    }
+    Player mock = Mockito.mock(Player.class);
+    Mockito.when(mock.isIgnoredForRound()).thenReturn(true);
+    players.add(mock);
+    assertEquals(true, players.haveAllPlayed());
+  }
+
+  @Test
+  void haveAllEqualBet() {
+    for (Player player : players) {
+      player.setCurrentBet(42);
+    }
+    Player mock = Mockito.mock(Player.class);
+    Mockito.when(mock.isIgnoredForRound()).thenReturn(true);
+    players.add(mock);
+    assertEquals(true, players.haveAllEqualBet());
+  }
+
+  @Test
+  void initPlayingPlayerPosition() {
+    Player mock = Mockito.mock(Player.class);
+    Mockito.when(mock.isEliminated()).thenReturn(true);
+    players.add(0, mock);
+    players.initPlayingPlayerPosition();
+    assertEquals(players.get(1), players.getPlayingPlayer());
   }
 }
