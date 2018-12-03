@@ -39,6 +39,6 @@ public class ThreeOfAKind extends Combination {
 
   @Override
   public String toString() {
-    return "ThreeOfAKind of " + rank;
+    return "Brelan de " + rank;
   }
 }

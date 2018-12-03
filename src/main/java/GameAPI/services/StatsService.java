@@ -37,7 +37,7 @@ public class StatsService {
         String formattedDate = sdf.format(date);
         log.info("userId : " + userId);
         log.info("gameId : " + gameId);
-        log.info("date : " + gameId);
+        log.info("date : " + formattedDate);
         return iResultClient.createResult(userId, gameId, moneyWon, formattedDate, combinaison);
     }
 

@@ -6,7 +6,7 @@ public enum Rank {
     Two(0, "Deux"),
     Three(1, "Trois"),
     Four(2, "Quatre"),
-    Five(3, "Cind"),
+    Five(3, "Cinq"),
     Six(4, "Six"),
     Seven(5, "Sept"),
     Eight(7, "Huit"),
