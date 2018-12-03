@@ -96,7 +96,7 @@ public class Round {
         Integer earnedMoneyByPlayer = pot / winners.size();
         for (Player player : winners) {
             player.win(earnedMoneyByPlayer);
-            //insertUserResult(player, earnedMoneyByPlayer);
+            insertUserResult(player, earnedMoneyByPlayer);
             winnerIds.add(player.getUser().getId());
         }
     }
@@ -109,7 +109,7 @@ public class Round {
         log.info(loosers.toString());
         for (Player looser : loosers) {
             looser.loose();
-            //insertUserResult(looser, looser.getCurrentBet());
+            insertUserResult(looser, -looser.getCurrentBet());
         }
     }
 
@@ -118,7 +118,6 @@ public class Round {
                 player.getUser().getId(),
                 game.getId(),
                 moneyWon,
-                new Date(),
                 player.getCombination()
         );
     }

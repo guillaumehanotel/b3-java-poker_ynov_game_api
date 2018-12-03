@@ -1,5 +1,6 @@
 package GameAPI.controllers;
 
+import GameAPI.engine.ResultStat;
 import GameAPI.engine.action.Action;
 import GameAPI.engine.card.Card;
 import GameAPI.engine.game.Game;
@@ -7,6 +8,7 @@ import GameAPI.engine.game.GameStatus;
 import GameAPI.engine.game.GameSystem;
 import GameAPI.engine.user.User;
 import GameAPI.engine.user.UserCards;
+import GameAPI.services.StatsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,13 @@ public class GameController {
 
     @Autowired
     private GameSystem gameSystem;
+
+    final StatsService statsService;
+
+    @Autowired
+    public GameController(StatsService statsService) {
+        this.statsService = statsService;
+    }
 
     @RequestMapping(value = "/game/startingChips", method = RequestMethod.GET)
     Integer getStartingChips() {
@@ -90,4 +99,10 @@ public class GameController {
         Game game = gameSystem.getGameById(gameId);
         return game.getLastCommunityCards();
     }
+
+    @RequestMapping(value = "/users/{userId}/stats")
+    ResultStat getStatsByUser(@PathVariable Integer userId) {
+        return statsService.getStatsByUser(userId);
+    }
+
 }
