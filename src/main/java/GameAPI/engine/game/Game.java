@@ -273,4 +273,8 @@ public class Game {
     public Boolean waitsActionFromUser(User user) {
         return isActionExpected() && isUserValid(user);
     }
+
+    public void addToPot(Integer money) {
+        pot += money;
+    }
 }

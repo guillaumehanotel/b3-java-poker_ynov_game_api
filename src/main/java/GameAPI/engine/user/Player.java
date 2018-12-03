@@ -28,6 +28,7 @@ public class Player {
     private Integer earnedMoney;
 
     private Boolean isEliminated;
+    // Should be called hasFolded but we kept it hasDropped because of backwards compatibility with the node api
     private Boolean hasDropped;
     private Boolean hasPlayedTurn;
 
@@ -79,10 +80,10 @@ public class Player {
 
     public void bets(Integer amount) {
         log.info(this.user.getUsername() + " bets " + amount);
-        this.currentBet += amount;
-        this.chips -= amount;
-        game.setPot(game.getPot() + amount);
-        this.hasPlayedTurn = true;
+        currentBet += amount;
+        chips -= amount;
+        game.addToPot(amount);
+        hasPlayedTurn = true;
     }
 
     public void fold() {
@@ -93,24 +94,24 @@ public class Player {
 
     public void call(Integer biggestBet) {
         log.info(this.user.getUsername() + " call");
-        // si on a pas assez pour suivre, on mise tout ce qui nous reste
         if (biggestBet - currentBet < chips) {
-            this.bets(biggestBet - currentBet);
+            bets(biggestBet - currentBet);
         } else {
-            this.bets(chips);
+            // si on a pas assez pour suivre, on mise tout ce qui nous reste
+            bets(chips);
         }
         this.hasPlayedTurn = true;
     }
 
     private Boolean hasAllIn(){
-        return currentBet.equals(chips + currentBet);
+        return chips == 0;
     }
 
-    public boolean hasFold() {
+    boolean hasFolded() {
         return hasDropped;
     }
 
-    public boolean hasPlayedTurn() {
+    boolean hasPlayedTurn() {
         return hasPlayedTurn;
     }
 
@@ -124,12 +125,8 @@ public class Player {
      * - il a misé tout ses jetons (all-in)
      */
     @JsonIgnore
-    public Boolean isIgnoredForRound(){
-        if (!isEliminated) {
-            return hasAllIn() || hasDropped;
-        } else {
-            return true;
-        }
+    Boolean isIgnoredForRound(){
+        return isEliminated || hasAllIn() || hasDropped;
     }
 
     @Override
@@ -147,6 +144,7 @@ public class Player {
     public void win(Integer earnedMoney) {
         log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
+        // No need to build combination since to know if this win we need to build it, so it's already built
         this.combination = _combination != null ? _combination.toString() : null;
         log.info("Winning combination : " + _combination);
         this.earnedMoney = earnedMoney;
@@ -168,7 +166,7 @@ public class Player {
         this.previousDownCards.addAll(downCards);
     }
 
-    public Integer comparesCards(Player player) {
+    Integer comparesCards(Player player) {
         Combination bestCombination = getBestCombination();
         Combination playerBestCombination = player.getBestCombination();
         if (bestCombination == null && playerBestCombination == null) return 0;
@@ -178,7 +176,7 @@ public class Player {
     }
 
     @JsonIgnore
-    public Combination getBestCombination() {
+    private Combination getBestCombination() {
         List<Combination> combinations = new ArrayList<>();
         Cards allCards = getAllCards();
         for (Class<? extends Combination> possibleCombination : game.getCombinationTypes()) {
@@ -191,6 +189,10 @@ public class Player {
         Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
         this._combination = bestCombination;
         return bestCombination;
+    }
+
+    Combination getBestCombinationForTest() {
+      return getBestCombination();
     }
 
 }

@@ -101,15 +101,15 @@ public class Players extends ArrayList<Player> {
         return stream().collect(
                 HashMap::new,
                 (hashMap, player) -> {
-                    hashMap.putIfAbsent(player.hasFold(), new ArrayList<>());
-                    hashMap.get(player.hasFold()).add(player);
+                    hashMap.putIfAbsent(player.hasFolded(), new ArrayList<>());
+                    hashMap.get(player.hasFolded()).add(player);
                 },
                 HashMap::putAll
         );
     }
 
-    public Boolean haveAllFoldExceptOne() {
-        return stream().filter(player -> !player.hasFold()).count() == 1;
+    public Boolean haveAllFoldedExceptOne() {
+        return stream().filter(player -> !player.hasFolded()).count() == 1;
     }
 
     public Boolean haveAllPlayed() {

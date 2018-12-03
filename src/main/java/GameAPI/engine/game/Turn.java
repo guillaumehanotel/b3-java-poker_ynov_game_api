@@ -73,7 +73,7 @@ public class Turn {
     }
 
     public Boolean isFinished() {
-        if (players.haveAllFoldExceptOne()) {
+        if (players.haveAllFoldedExceptOne()) {
             return true;
         } else {
             return players.haveAllPlayed() && players.haveAllEqualBet();

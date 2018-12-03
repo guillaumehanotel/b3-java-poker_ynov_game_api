@@ -1,14 +1,10 @@
-package GameAPI.engine;
+package GameAPI.engine.user;
 
 import GameAPI.engine.card.Card;
 import GameAPI.engine.card.Rank;
 import GameAPI.engine.card.Suit;
 import GameAPI.engine.card.combinations.*;
 import GameAPI.engine.game.Game;
-import GameAPI.engine.user.Player;
-import GameAPI.engine.user.PlayerStatus;
-import GameAPI.engine.user.Players;
-import GameAPI.engine.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,7 +13,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PlayersTest {
 
@@ -111,7 +108,7 @@ class PlayersTest {
   void haveAllFoldExceptOne() {
     players.get(0).fold();
     players.get(1).fold();
-    assertEquals(true, players.haveAllFoldExceptOne());
+    assertEquals(true, players.haveAllFoldedExceptOne());
   }
 
   @Test
