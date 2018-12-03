@@ -6,6 +6,7 @@ import GameAPI.engine.card.Card;
 import GameAPI.engine.card.combinations.*;
 import GameAPI.engine.user.Player;
 import GameAPI.engine.user.User;
+import GameAPI.engine.user.UserCards;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,8 @@ import java.util.stream.Collectors;
 @Data
 public class Game {
 
-    static final Integer NB_PLAYER_MAX = 4;
+    static final Integer NB_PLAYER_MAX = 3;
+    static final Integer DELAY = 500;
 
     private static Integer nbGame = 0;
 
@@ -114,15 +116,26 @@ public class Game {
             Round round = new Round(this);
             rounds.add(round);
             round.start();
+            incrementDealerPosition();
         }
         log.info("[GAME " + id + "] FINISHED");
-        gameStatus = GameStatus.FINISHED;
-        winnerId = getWinner().getId();
-        markActionAsProcessed();
+        this.gameStatus = GameStatus.FINISHED;
+        creditGameWinner();
+        this.markActionAsProcessed();
+    }
+
+    private void incrementDealerPosition() {
+        dealerPosition = (dealerPosition + 1) % players.size();
     }
 
     private Boolean hasWinner() {
         return getNonEliminatedPlayers().size() == 1;
+    }
+
+    private void creditGameWinner() {
+        User winner = getWinner();
+        this.winnerId = winner.getId();
+        winner.setMoney(winner.getMoney() + GameSystem.STARTING_CHIPS);
     }
 
     private User getWinner(){
@@ -135,7 +148,7 @@ public class Game {
     @JsonIgnore
     public List<Player> getNonEliminatedPlayers() {
         return players.stream()
-                .filter(player -> !player.getIsEliminated())
+                .filter(player -> !player.isEliminated())
                 .collect(Collectors.toList());
     }
 
@@ -159,6 +172,23 @@ public class Game {
         return resultUserList.get(0);
     }
 
+    @JsonIgnore
+    public List<UserCards> getPreviousUsersDowncards(){
+        List<UserCards> userCards = new ArrayList<>();
+        if(gameStatus == GameStatus.IN_PROGRESS){
+            for (Player player : getNonEliminatedPlayers()) {
+                userCards.add(new UserCards(player.getUser().getId(), player.getPreviousDownCards()));
+            }
+        } else if(gameStatus == GameStatus.FINISHED) {
+            // lorsque le jeu est fini, on veut récupére les cartes des joueurs dont la manche vient de se finir
+            // on ne filtre pas les joueurs éliminés car sinon on ne récupèrerait que le gagnant vu que les autres viennent d'être éliminés
+            for (Player player : getPlayers()) {
+                userCards.add(new UserCards(player.getUser().getId(), player.getDownCards()));
+            }
+        }
+        return userCards;
+    }
+
     void addFlag(GameFlag gameFlag) {
         gameFlags.add(gameFlag);
     }
@@ -168,10 +198,9 @@ public class Game {
         log.error(error);
     }
 
-    public void updatePlayingPlayerData(Round round){
-        Player playingPlayer = round.getPlayers().getPlayingPlayer();
-        this.setPlayingPlayerId(playingPlayer.getUser().getId());
-        this.setPlayingPlayerCallValue(round.getBiggestBet() - playingPlayer.getCurrentBet());
+    public void updatePlayingPlayerData(Player player, Integer biggestBet){
+        this.setPlayingPlayerId(player.getUser().getId());
+        this.setPlayingPlayerCallValue(biggestBet - player.getCurrentBet());
     }
 
     /**
@@ -186,9 +215,20 @@ public class Game {
     }
 
     /**
+     * This method is called when the last player has join the game and the game wait for the first action
+     */
+    public void markLastJoinAsProcessed(){
+        try {
+            joinQueue.put(this);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Return this when this has ended to process an action
      */
-    public Game returnWhenActionProcessed() {
+    public Game returnGameWhenActionProcessed() {
         try {
             return gameQueue.take();
         } catch (InterruptedException e) {
@@ -210,12 +250,9 @@ public class Game {
         return combinationTypes;
     }
 
-    /**
-     * Vérifie d'une action est attendue
-     */
     private Boolean isActionExpected() {
         ActionGuard actionGuard = getActionGuard();
-        if (actionGuard.getAnActionIsExpected()) {
+        if (actionGuard.isAnActionExpected()) {
             return true;
         } else {
             addError("The game doesn't wait an action");
@@ -223,9 +260,6 @@ public class Game {
         }
     }
 
-    /**
-     * Vérifie que le user à l'origine de l'action est bien attendue
-     */
     private Boolean isUserValid(User user) {
         ActionGuard actionGuard = getActionGuard();
         if (actionGuard.getUserId().equals(user.getId())) {

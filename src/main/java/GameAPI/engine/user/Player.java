@@ -5,6 +5,7 @@ import GameAPI.engine.card.Cards;
 import GameAPI.engine.card.combinations.*;
 import GameAPI.engine.card.combinations.exceptions.CombinationNotPresentException;
 import GameAPI.engine.game.Game;
+import GameAPI.engine.game.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -20,19 +21,23 @@ public class Player {
     private User user;
     @JsonIgnore
     private Game game;
+
     private Integer chips;
+    private Integer currentBet;
+    private List<Role> roles;
+    private Integer earnedMoney;
+
     private Boolean isEliminated;
     private Boolean hasDropped;
-    private Integer currentBet;
     private Boolean hasPlayedTurn;
+
     @JsonIgnore
     private List<Card> downCards;
     @JsonIgnore
     private List<Card> previousDownCards;
-    private String combination;
-    private Integer earnedMoney;
     @JsonIgnore
     private Combination _combination; //store combination without showing it in json
+    private String combination;
 
     public Player(User user, Integer startingChips, Game game) {
         this.user = user;
@@ -43,27 +48,33 @@ public class Player {
         this.chips = startingChips;
 
         // lié à un round
+        this.currentBet = 0;
+        this.roles = new ArrayList<>();
         this.hasDropped = false;
         this.downCards = new ArrayList<>();
         this.previousDownCards = new ArrayList<>();
-        this.currentBet = 0;
 
         // lié à un tour
         this.hasPlayedTurn = false;
     }
 
-    public void resetRound(){
+    public void resetRound() {
         this.hasDropped = false;
         this.downCards.clear();
         this.currentBet = 0;
+        this.roles.clear();
     }
 
-    public void resetTurn(){
+    public void resetTurn() {
         this.hasPlayedTurn = false;
     }
 
     public void addCardToHand(Card card) {
         this.downCards.add(card);
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
     }
 
     public void bets(Integer amount) {
@@ -83,7 +94,7 @@ public class Player {
     public void call(Integer biggestBet) {
         log.info(this.user.getUsername() + " call");
         // si on a pas assez pour suivre, on mise tout ce qui nous reste
-        if(biggestBet - currentBet < chips){
+        if (biggestBet - currentBet < chips) {
             this.bets(biggestBet - currentBet);
         } else {
             this.bets(chips);
@@ -95,6 +106,17 @@ public class Player {
         return currentBet.equals(chips + currentBet);
     }
 
+    public boolean hasFold() {
+        return hasDropped;
+    }
+
+    public boolean hasPlayedTurn() {
+        return hasPlayedTurn;
+    }
+
+    @JsonIgnore
+    public boolean isEliminated() { return isEliminated; }
+
     /**
      * Un joueur est considéré comme ignoré pour une manche si :
      * - il est éliminé
@@ -103,7 +125,7 @@ public class Player {
      */
     @JsonIgnore
     Boolean isIgnoredForRound(){
-        if(!isEliminated){
+        if (!isEliminated) {
             return hasAllIn() || hasDropped;
         } else {
             return true;
@@ -115,7 +137,38 @@ public class Player {
         return "player" + user.getUsername();
     }
 
-    Integer comparesCards(Player player) {
+    private Cards getAllCards() {
+        Cards allCards = new Cards();
+        allCards.addAll(downCards);
+        allCards.addAll(game.getLastCommunityCards());
+        return allCards;
+    }
+
+    public void win(Integer earnedMoney) {
+        log.info(this.user.getUsername() + " WINS " + earnedMoney);
+        this.chips += earnedMoney;
+        this.combination = _combination != null ? _combination.toString() : null;
+        log.info("Winning combination : " + _combination);
+        this.earnedMoney = earnedMoney;
+        user.setMoney(user.getMoney() + this.earnedMoney);
+    }
+
+    public void loose() {
+        log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
+        this.combination = _combination != null ? _combination.toString() : null;
+        log.info("Loosing combination : " + _combination);
+        if(this.chips == 0){
+            log.info(this + " is eliminated");
+            this.isEliminated = true;
+        }
+    }
+
+    public void savePreviousDownCards() {
+        this.previousDownCards.clear();
+        this.previousDownCards.addAll(downCards);
+    }
+
+    public Integer comparesCards(Player player) {
         Combination bestCombination = getBestCombination();
         Combination playerBestCombination = player.getBestCombination();
         if (bestCombination == null && playerBestCombination == null) return 0;
@@ -140,41 +193,4 @@ public class Player {
         return bestCombination;
     }
 
-    private Cards getAllCards() {
-        Cards allCards = new Cards();
-        allCards.addAll(downCards);
-        allCards.addAll(game.getLastCommunityCards());
-        return allCards;
-    }
-
-    public void win(Integer earnedMoney) {
-        log.info(this.user.getUsername() + " WINS " + earnedMoney);
-        this.chips += earnedMoney;
-        this.combination = _combination != null ? _combination.toString() : null;
-        log.info("Winning combination : " + _combination);
-        this.earnedMoney = earnedMoney;
-    }
-
-    public void loose() {
-        log.info(this.user.getUsername() + " LOOSES " + this.currentBet);
-        this.combination = _combination != null ? _combination.toString() : null;
-        log.info("Loosing combination : " + _combination);
-        if(this.chips == 0){
-            log.info(this + " is eliminated");
-            this.isEliminated = true;
-        }
-    }
-
-    public void syncMoneyWithChips() {
-        user.setMoney(user.getMoney() + this.chips);
-    }
-
-    public void savePreviousDownCards() {
-        this.previousDownCards.clear();
-        this.previousDownCards.addAll(downCards);
-    }
-
-    public User getUser() {
-    return user;
-  }
 }

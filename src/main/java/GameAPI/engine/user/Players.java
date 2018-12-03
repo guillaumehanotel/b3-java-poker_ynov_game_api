@@ -1,70 +1,72 @@
 package GameAPI.engine.user;
 
+import GameAPI.engine.game.Role;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Players extends ArrayList<Player> {
 
-    private Integer currentOrderIndex = 0;
+    private Integer dealerPosition;
+    private Integer playingPlayerPosition;
 
+    public Players(List<Player> players, Integer dealerPosition) {
+        this.dealerPosition = dealerPosition;
+        addAll(players);
+        initPlayingPlayerPosition();
+    }
+
+    public void attributeDealer() {
+        get(playingPlayerPosition).addRole(Role.DEALER);
+    }
+
+    /**
+     * Doit être réinitialisé à la fin de chaque tour (on ne veut pas réinit au début du PREFLOP car la mise des blinds fait avancer les tours)
+     */
+    public void initPlayingPlayerPosition() {
+        playingPlayerPosition = get(dealerPosition).isEliminated() ? getNextPlayingPlayerPosition() : dealerPosition;
+    }
+
+    /**
+     * Récupère le joueur dont c'est le tour de jouer
+     */
     public Player getPlayingPlayer() {
-        return get(currentOrderIndex);
+        return get(playingPlayerPosition);
     }
 
-    public void passToNextPlayer() {
-        if (currentOrderIndex + 1 == size()) {
-            currentOrderIndex = 0;
-        } else {
-            currentOrderIndex++;
-        }
+    /**
+     * Fait passer le tour au prochain joueur (qu'il soit éliminé/couché ou non)
+     */
+    private void passToNextPlayer(){
+        playingPlayerPosition = (playingPlayerPosition + 1) % size();
     }
 
-    public Player getNextPlayingPlayer() {
+    /**
+     * Fait passer le tour au prochain joueur et retourne la position du prochain joueur dont c'est vraiment le tour de jouer
+     */
+    private Integer getNextPlayingPlayerPosition() {
         passToNextPlayer();
-        Player player = getPlayingPlayer();
-        if (player.getIsEliminated() || player.getHasDropped()) {
-            return getNextPlayingPlayer();
+        if(getPlayingPlayer().isIgnoredForRound()){
+            return getNextPlayingPlayerPosition();
         }
+        return playingPlayerPosition;
+    }
+
+    /**
+     * Fait passer le tour au prochain joueur et retourne le joueur dont c'est vraiment le tour de jouer
+     */
+    public Player getNextPlayingPlayer() {
+        Player player = get(getNextPlayingPlayerPosition());
         log.info("turn passes to " + player.getUser().getUsername());
         return player;
     }
 
-    /**
-     * Récupère le joueur suivant dans l'ordre des joueurs d'un jeu
-     */
-    public Player getNextPlayer() {
-        if (currentOrderIndex == size()) {
-            currentOrderIndex = 0;
-        }
-        Player player = get(currentOrderIndex);
-        currentOrderIndex++;
-        return player;
-    }
 
-    /**
-     * Récupère le joueur suivant qui n'est pas éliminé et qui n'est pas couché
-     */
-    public Player getNextPlaying() {
-        Player player = getNextPlayer();
-        if (player.getIsEliminated() || player.getHasDropped()) {
-            return getNextPlaying();
-        }
-        return player;
-    }
 
-    /**
-     * Modifie l'index de l'ordre de jeu des joueurs
-     */
-    public void setCurrentOrderIndex(Integer currentOrderIndex) {
-        if (currentOrderIndex >= this.size()) {
-            log.info("CurrentIndex too big " + currentOrderIndex + " transform to " + currentOrderIndex % size());
-        }
-        this.currentOrderIndex = currentOrderIndex % size();
-    }
 
     public HashMap<PlayerStatus, List<Player>> getPlayersByResult() {
         HashMap<Boolean, List<Player>> playersByDropState = getPlayersByDropState();
@@ -94,38 +96,29 @@ public class Players extends ArrayList<Player> {
 
     private HashMap<Boolean, List<Player>> getPlayersByDropState() {
         return stream().collect(
-            HashMap::new,
-            (hashMap, player) -> {
-                hashMap.putIfAbsent(player.getHasDropped(), new ArrayList<>());
-                hashMap.get(player.getHasDropped()).add(player);
-            },
-            HashMap::putAll
+                HashMap::new,
+                (hashMap, player) -> {
+                    hashMap.putIfAbsent(player.hasFold(), new ArrayList<>());
+                    hashMap.get(player.hasFold()).add(player);
+                },
+                HashMap::putAll
         );
     }
 
-    private Boolean allPlayersHaveDroppedExceptOne() {
-        return stream().filter(player -> !player.getHasDropped()).count() == 1;
+    public Boolean haveAllFoldExceptOne() {
+        return stream().filter(player -> !player.hasFold()).count() == 1;
     }
 
-    private Boolean haveAllPlayed() {
+    public Boolean haveAllPlayed() {
         return stream()
-            .filter(player -> !player.isIgnoredForRound())
-            .allMatch(Player::getHasPlayedTurn);
+                .filter(player -> !player.isIgnoredForRound())
+                .allMatch(Player::hasPlayedTurn);
     }
 
-    private Boolean haveAllEqualBet() {
-        return stream()
-            .filter(player -> !player.isIgnoredForRound())
-            .map(Player::getCurrentBet)
-            .allMatch(bet -> bet.equals(get(0).getCurrentBet()));
+    public Boolean haveAllEqualBet() {
+        List<Integer> players = stream().filter(player -> !player.isIgnoredForRound()).map(Player::getCurrentBet).collect(Collectors.toList());
+        return players.stream().allMatch(players.get(0)::equals);
     }
 
-    public Boolean haveAllFinishedTurn() {
-        if (allPlayersHaveDroppedExceptOne()) {
-            return false;
-        } else {
-            return (!haveAllPlayed() || !haveAllEqualBet());
-        }
-    }
 
 }

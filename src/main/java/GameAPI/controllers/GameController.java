@@ -1,20 +1,16 @@
 package GameAPI.controllers;
 
 import GameAPI.engine.action.Action;
-import GameAPI.engine.action.ActionGuard;
-import GameAPI.engine.action.ActionType;
 import GameAPI.engine.card.Card;
 import GameAPI.engine.game.Game;
 import GameAPI.engine.game.GameStatus;
 import GameAPI.engine.game.GameSystem;
-import GameAPI.engine.user.Player;
 import GameAPI.engine.user.User;
 import GameAPI.engine.user.UserCards;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,11 +30,7 @@ public class GameController {
     Game userJoinGame(@RequestBody User user) throws InterruptedException {
         Game game = gameSystem.userAskForGame(user);
         game.resetFlagAndQueueAndErrors();
-        if (game.getGameStatus() == GameStatus.IN_PROGRESS) {
-            return game.joinQueue.take();
-        } else {
-            return game;
-        }
+        return game.getGameStatus() == GameStatus.IN_PROGRESS ? game.joinQueue.take() : game;
     }
 
     /**
@@ -50,7 +42,7 @@ public class GameController {
      * Si tout est ok, alors on passe l'action au service qui va l'éxecuter
      */
     @RequestMapping(value = "/action", method = RequestMethod.POST)
-    Game handleAction(@RequestBody Action action) throws InterruptedException {
+    Game handleAction(@RequestBody Action action) {
         Integer gameId = action.getGameId();
         Game game = null;
         try {
@@ -64,13 +56,13 @@ public class GameController {
                 game.resetFlagAndQueueAndErrors();
 
                 if (game.waitsActionFromUser(user)) {
-                    game.getActionManager().saveAction(action);
+                    game.getActionManager().registerAction(action);
                 } else {
                     game.markActionAsProcessed();
                 }
 
             } else {
-                game.addError("INVALID ACTION");
+                game.addError("[ACTION REJECTED]");
                 game.markActionAsProcessed();
             }
 
@@ -78,7 +70,7 @@ public class GameController {
             log.error(e.getMessage());
         }
 
-        return game != null ? game.returnWhenActionProcessed() : null;
+        return game != null ? game.returnGameWhenActionProcessed() : null;
     }
 
     @RequestMapping(value = "/game/{gameId}/users/{userId}/cards", method = RequestMethod.GET)
@@ -89,20 +81,8 @@ public class GameController {
 
     @RequestMapping(value = "/game/{gameId}/users/previous/cards", method = RequestMethod.GET)
     List<UserCards> getPreviousUsersDowncards(@PathVariable Integer gameId) {
-        List<UserCards> userCards = new ArrayList<>();
         Game game = gameSystem.getGameById(gameId);
-        if(game.getGameStatus() == GameStatus.IN_PROGRESS){
-            for (Player player : game.getNonEliminatedPlayers()) {
-                userCards.add(new UserCards(player.getUser().getId(), player.getPreviousDownCards()));
-            }
-        } else if(game.getGameStatus() == GameStatus.FINISHED) {
-            // on ne filtre pas les joueurs éliminés
-            for (Player player : game.getPlayers()) {
-                userCards.add(new UserCards(player.getUser().getId(), player.getDownCards()));
-            }
-        }
-
-        return userCards;
+        return game.getPreviousUsersDowncards();
     }
 
     @RequestMapping(value = "/game/{gameId}/previous/communitycards")
