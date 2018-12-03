@@ -124,7 +124,7 @@ public class Player {
      * - il a misé tout ses jetons (all-in)
      */
     @JsonIgnore
-    Boolean isIgnoredForRound(){
+    public Boolean isIgnoredForRound(){
         if (!isEliminated) {
             return hasAllIn() || hasDropped;
         } else {

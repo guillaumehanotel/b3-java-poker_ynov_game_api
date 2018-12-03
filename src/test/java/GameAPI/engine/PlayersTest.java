@@ -22,10 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayersTest {
 
   private Players players;
-/*
+
   @BeforeEach
-  void setUp() throws Exception {
-    players = new Players();
+  void setUp() {
     Game game = Mockito.mock(Game.class);
     Mockito.when(game.getLastCommunityCards()).thenReturn(Collections.emptyList());
     Mockito.when(game.getCombinationTypes()).thenReturn(Arrays.asList(
@@ -40,38 +39,25 @@ class PlayersTest {
         StraightFlush.class,
         RoyalFlush.class
     ));
-    players.add(new Player(new User("mail", "p1", 10000), 1000, game));
-    players.add(new Player(new User("mail", "p2", 10000), 1000, game));
-    players.add(new Player(new User("mail", "p3", 10000), 1000, game));
+    List<Player> playersList = Arrays.asList(
+        new Player(new User("mail", "p1", 10000), 1000, game),
+        new Player(new User("mail", "p2", 10000), 1000, game),
+        new Player(new User("mail", "p3", 10000), 1000, game)
+    );
+    players = new Players(playersList, 0);
   }
-*/
 
-  /*
+
   @Test
-  void getNext() {
+  void getPlayingPlayer() {
     final Player expectedPlayer = players.get(0);
-    final Player actualPlayer = players.getNextPlayer();
+    final Player actualPlayer = players.getPlayingPlayer();
 
     assertEquals(expectedPlayer, actualPlayer);
-  }*/
-
-//  @Test
-//  void getNextPlayingPlayer() {
-//    players.get(0).playPreFlop(1);
-//    Player expected = players.get(1);
-//    Player nextPlaying = players.getNextPlayingPlayer();
-//    assertEquals(expected, nextPlaying);
-//  }
-/*
-  @Test
-  void setCurrentIndex() {
-    assertThrows(RuntimeException.class, () -> players.setCurrentOrderIndex(3));
   }
-*/
 
-/*
   @Test
-  void getWinnersUnique() {
+  void getPlayersByResultOneWinner() {
     players.get(0).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Eight), new Card(Suit.HEART, Rank.Seven)));
     players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
     players.get(2).setDownCards(Arrays.asList(new Card(Suit.DIAMOND, Rank.Eight), new Card(Suit.SPADE, Rank.Seven)));
@@ -81,7 +67,7 @@ class PlayersTest {
   }
 
   @Test
-  void getWinnersMultiple() {
+  void getPlayersByResultMultipleWinners() {
     players.get(0).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Eight), new Card(Suit.HEART, Rank.Seven)));
     players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
     players.get(2).setDownCards(Arrays.asList(new Card(Suit.SPADE, Rank.Ace), new Card(Suit.DIAMOND, Rank.Ace)));
@@ -91,7 +77,7 @@ class PlayersTest {
   }
 
   @Test
-  void getWinnerLastNotDropped() {
+  void getPlayersByResultWinnerLastNotDropped() {
     players.get(0).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Eight), new Card(Suit.HEART, Rank.Seven)));
     players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
     players.get(2).setDownCards(Arrays.asList(new Card(Suit.DIAMOND, Rank.Eight), new Card(Suit.SPADE, Rank.Seven)));
@@ -101,5 +87,23 @@ class PlayersTest {
     Player expected = players.get(0);
     assertEquals(expected, actual);
   }
-  */
+
+  @Test
+  void getPlayersByResultLooser() {
+    players.get(0).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Eight), new Card(Suit.HEART, Rank.Seven)));
+    players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
+    players.get(2).setDownCards(Arrays.asList(new Card(Suit.DIAMOND, Rank.Eight), new Card(Suit.SPADE, Rank.Seven)));
+    List<Player> actual = players.getPlayersByResult().get(PlayerStatus.LOOSER);
+    List<Player> expected = Arrays.asList(players.get(1), players.get(2));
+    assertArrayEquals(expected.toArray(), actual.toArray());
+  }
+
+  @Test
+  void getNextPlayingPlayer() {
+    players.add(0, Mockito.mock(Player.class));
+    Mockito.when(players.get(0).isIgnoredForRound()).thenReturn(true);
+    Player expected = players.get(1);
+    Player actual = players.getNextPlayingPlayer();
+    assertEquals(expected, actual);
+  }
 }
