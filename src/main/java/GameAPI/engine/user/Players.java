@@ -15,7 +15,7 @@ public class Players extends ArrayList<Player> {
         return get(currentOrderIndex);
     }
 
-    public void passToNextPlayer() {
+    private void passToNextPlayer() {
         if (currentOrderIndex + 1 == size()) {
             currentOrderIndex = 0;
         } else {
@@ -128,4 +128,7 @@ public class Players extends ArrayList<Player> {
         }
     }
 
+  public Integer getCurrentOrderIndexForTest() {
+    return currentOrderIndex;
+  }
 }

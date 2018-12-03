@@ -17,14 +17,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PlayersTest {
 
   private Players players;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     players = new Players();
     Game game = Mockito.mock(Game.class);
     Mockito.when(game.getLastCommunityCards()).thenReturn(Collections.emptyList());
@@ -63,7 +64,8 @@ class PlayersTest {
 
   @Test
   void setCurrentIndex() {
-    assertThrows(RuntimeException.class, () -> players.setCurrentOrderIndex(3));
+    players.setCurrentOrderIndex(3);
+    assertEquals((Integer) 0, players.getCurrentOrderIndexForTest());
   }
 
   @Test
@@ -96,5 +98,42 @@ class PlayersTest {
     Player actual = players.getPlayersByResult().get(PlayerStatus.WINNER).get(0);
     Player expected = players.get(0);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  void getPlayingPlayer() {
+  }
+
+  @Test
+  void getNextPlayingPlayer() {
+  }
+
+  @Test
+  void getNextPlayer() {
+  }
+
+  @Test
+  void getNextPlaying() {
+    players.setCurrentOrderIndex(0);
+    players.add(0, Mockito.mock(Player.class));
+    Mockito.when(players.get(0).getHasDropped()).thenReturn(true);
+    Mockito.when(players.get(0).getIsEliminated()).thenReturn(true);
+    Player expected = players.get(1);
+    Player actual = players.getNextPlaying();
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  void setCurrentOrderIndex() {
+    players.setCurrentOrderIndex(4);
+    assertEquals(players.get(1), players.getPlayingPlayer());
+  }
+
+  @Test
+  void getPlayersByResult() {
+  }
+
+  @Test
+  void haveAllFinishedTurn() {
   }
 }
