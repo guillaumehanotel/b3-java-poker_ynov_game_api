@@ -117,3 +117,23 @@ Returns the community cards of the previous round for a game.
 | ---- | ----------- |
 | 200 | return game |
 | 500 | Internal server error |
+    
+
+### /users/{userId}/stats
+
+---
+##### ***GET***
+
+Returns the community cards of the previous round for a game.
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| userId | path | User Id | Yes | number |
+
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | return stats of user |
+| 500 | Internal server error |

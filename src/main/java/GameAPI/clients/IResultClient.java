@@ -1,5 +1,6 @@
 package GameAPI.clients;
 
+import GameAPI.engine.ResultStat;
 import GameAPI.engine.game.Result;
 import feign.Body;
 import feign.Headers;
@@ -14,25 +15,21 @@ import java.util.Date;
 @FeignClient("ResultClient")
 public interface IResultClient {
 
-    @RequestLine("GET /results/users/{userId}")
-    Result getResultsByUserId(@Param("userId") Integer userId);
-
-    @RequestLine("GET /results/games/{gameId}")
-    Result getResultsByGameId(@Param("gameId") Integer userId);
+    @RequestLine("GET /stats/users/{userId}")
+    ResultStat getStatsByUser(@Param("userId") Integer userId);
 
     @RequestLine("POST /results")
     @Headers("Content-Type: application/json")
     @Body("%7B" +
             "\"userId\": \"{userId}\", " +
             "\"gameId\": \"{gameId}\", " +
-            "\"money_won\": \"{money_won}\", " +
-            "\"date\": \"{date}\", " +
+            "\"moneyWon\": \"{moneyWon}\", " +
             "\"combinaison\": \"{combinaison}\" " +
             "%7D")
     Result createResult(@Param("userId") Integer userId,
                         @Param("gameId") Integer gameId,
-                        @Param("money_won") Integer moneyWon,
-                        @Param("date") String date,
+                        @Param("moneyWon") Integer moneyWon,
                         @Param("combinaison") String combinaison);
+
 
 }

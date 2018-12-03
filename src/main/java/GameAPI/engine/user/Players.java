@@ -65,18 +65,21 @@ public class Players extends ArrayList<Player> {
         return player;
     }
 
-
-
-
     public HashMap<PlayerStatus, List<Player>> getPlayersByResult() {
+        HashMap<PlayerStatus, List<Player>> players = new HashMap<PlayerStatus, List<Player>>() {{
+            put(PlayerStatus.WINNER, new ArrayList<>());
+            put(PlayerStatus.LOOSER, new ArrayList<>());
+        }};
         HashMap<Boolean, List<Player>> playersByDropState = getPlayersByDropState();
-        HashMap<PlayerStatus, List<Player>> players = getPlayersByCardComparisonResult(playersByDropState.get(false));
-        players.get(PlayerStatus.LOOSER).addAll(playersByDropState.get(false));
         // If only one player left
         if (playersByDropState.get(false).size() == 1) {
             Player lastPlayer = playersByDropState.get(false).get(0);
             players.get(PlayerStatus.WINNER).add(lastPlayer);
+        } else {
+            players = getPlayersByCardComparisonResult(playersByDropState.get(false));
         }
+        if(playersByDropState.get(true) != null)
+            players.get(PlayerStatus.LOOSER).addAll(playersByDropState.get(true));
         return players;
     }
 
