@@ -78,8 +78,8 @@ class PlayersTest {
     players.get(0).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Eight), new Card(Suit.HEART, Rank.Seven)));
     players.get(1).setDownCards(Arrays.asList(new Card(Suit.CLUB, Rank.Ace), new Card(Suit.HEART, Rank.Ace)));
     players.get(2).setDownCards(Arrays.asList(new Card(Suit.DIAMOND, Rank.Eight), new Card(Suit.SPADE, Rank.Seven)));
-    players.get(1).setHasFold(true);
-    players.get(2).setHasFold(true);
+    players.get(1).setHasFolded(true);
+    players.get(2).setHasFolded(true);
     Player actual = players.getPlayersByResult().get(PlayerStatus.WINNER).get(0);
     Player expected = players.get(0);
     assertEquals(expected, actual);

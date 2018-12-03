@@ -111,6 +111,10 @@ public class Player {
         return hasDropped;
     }
 
+    void setHasFolded(Boolean hasFolded){
+        this.hasDropped = hasFolded;
+    }
+
     boolean hasPlayedTurn() {
         return hasPlayedTurn;
     }
