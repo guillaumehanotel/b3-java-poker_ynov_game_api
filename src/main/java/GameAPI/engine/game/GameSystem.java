@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Classe chargée de créer les game en fonction des demandes des utilisateurs
+ * Class in charge of creating games according to user requests
  */
 @Component
 @Slf4j
@@ -20,31 +20,34 @@ public class GameSystem {
     private List<Game> games;
     public static final Integer STARTING_CHIPS = 2000;
 
-
     public GameSystem() {
         this.games = new ArrayList<>();
     }
 
-    public Game userAskForGame(User user) {
+    /**
+     * Method in charge of finding a game for a user
+     * @param user The user who asks to join a game
+     * @return The game found
+     */
+    public Game userJoinGame(User user) {
         Game game = this.findGameForUser();
         try {
             game.addPlayer(user);
         } catch (Exception e) {
             log.error(e.getMessage());
+            game.addError(e.getMessage());
         }
         return game;
     }
 
     /**
-     * Fonction chargée de trouver une partie pour un joueur
-     *
-     * Si aucune partie n'est lancée, on en crée une et on l'ajoute à la liste global des parties
-     * Si il existe des parties, mais que'aucune n'est en attente, alors idem, on crée
-     * Sinon, on va chercher la première partie de la liste des parties en attente
+     * Create a game if none exists
+     * Otherwise create a game if there is no pending game
+     * If there are games waiting, join the first one
+     * @return The game found
      */
     private Game findGameForUser() {
         Game game;
-
         if (this.games.isEmpty()) {
             game = new Game();
             this.games.add(game);
@@ -57,18 +60,23 @@ public class GameSystem {
                 game = waitingGames.get(0);
             }
         }
-
         return game;
     }
 
+    /**
+     * @return List of pending games
+     */
     private List<Game> getWaitingGames() {
-        return games.stream().filter(game -> game.getGameStatus() == GameStatus.STARTING_PENDING).collect(Collectors.toList());
+        return games.stream()
+                .filter(game -> game.getGameStatus() == GameStatus.STARTING_PENDING)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Va chercher parmi la liste de toutes les game, celle dont l'ID correspond à celui passé en paramètre
-     * Si plusieurs game ou aucune sont trouvées suite à cette recherche, on lance une exception car ce n'est pas normal
-     * On retourne la première (et seule) de la liste
+     * Go search among the list of all the games, the one whose ID corresponds to the one passed in parameter
+     * Raises an exception if none or more are found
+     * @param id The game id
+     * @return The game found
      */
     public Game getGameById(Integer id) {
         List<Game> resultGameList = this.games.stream()

@@ -34,10 +34,16 @@ public class GameController {
         return GameSystem.STARTING_CHIPS;
     }
 
+    /**
+     * Allows a user to join a game
+     * @param user The user who asks to join a game
+     * @return The game found
+     * @throws InterruptedException When a user joins a game of which he is already a member
+     */
     @RequestMapping(value = "/users/join", method = RequestMethod.POST)
     @ResponseBody
-    Game userJoinGame(@RequestBody User user) throws InterruptedException {
-        Game game = gameSystem.userAskForGame(user);
+    Game handleUserJoinRequest(@RequestBody User user) throws InterruptedException {
+        Game game = gameSystem.userJoinGame(user);
         game.resetFlagAndQueueAndErrors();
         return game.getGameStatus() == GameStatus.IN_PROGRESS ? game.joinQueue.take() : game;
     }
@@ -49,6 +55,9 @@ public class GameController {
      * - si une action est attendue
      * - si le user à l'origine de cette action est bien celui attendu
      * Si tout est ok, alors on passe l'action au service qui va l'éxecuter
+     *
+     *
+     *
      */
     @RequestMapping(value = "/action", method = RequestMethod.POST)
     Game handleAction(@RequestBody Action action) {

@@ -42,7 +42,8 @@ public class Turn {
         game.addFlag(GameFlag.NEW_TURN);
         initTurn();
 
-        round.passToNextPlayerAndWaitAction();
+        if(!players.areAllIgnored())
+            round.passToNextPlayerAndWaitAction();
 
         // Retourne le jeu si tous les joueurs sont présents
         game.markLastJoinAsProcessed();
@@ -73,7 +74,7 @@ public class Turn {
     }
 
     public Boolean isFinished() {
-        if (players.haveAllFoldExceptOne()) {
+        if (players.haveAllFoldExceptOne() || players.areAllIgnored()) {
             return true;
         } else {
             return players.haveAllPlayed() && players.haveAllEqualBet();

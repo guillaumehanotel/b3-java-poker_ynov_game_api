@@ -123,8 +123,21 @@ public class Players extends ArrayList<Player> {
             .filter(player -> !player.isIgnoredForRound())
             .map(Player::getCurrentBet)
             .collect(Collectors.toList());
-        return players.stream().allMatch(players.get(0)::equals);
+        // Si tout le monde a all-in, on dit qu'ils ont tous la meme bet
+        if(players.isEmpty())
+            return true;
+        else
+            return players.stream().allMatch(players.get(0)::equals);
     }
 
 
+    /**
+     * Si le nb de joueurs ignorés est égale au nb total de joueur
+     * @return
+     */
+    public boolean areAllIgnored() {
+        return stream()
+                .filter(Player::isIgnoredForRound)
+                .count() == size();
+    }
 }
