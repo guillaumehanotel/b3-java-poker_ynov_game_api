@@ -1,6 +1,6 @@
 package GameAPI.clients;
 
-import GameAPI.engine.ResultStat;
+import GameAPI.stat.ResultStat;
 import GameAPI.engine.game.Result;
 import feign.Body;
 import feign.Headers;
@@ -8,8 +8,6 @@ import feign.Param;
 import feign.RequestLine;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 @Component
 @FeignClient("ResultClient")

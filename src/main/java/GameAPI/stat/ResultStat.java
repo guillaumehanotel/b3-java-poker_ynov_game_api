@@ -1,4 +1,4 @@
-package GameAPI.engine;
+package GameAPI.stat;
 
 
 public class ResultStat {

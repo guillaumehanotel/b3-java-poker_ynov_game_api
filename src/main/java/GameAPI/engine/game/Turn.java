@@ -74,7 +74,7 @@ public class Turn {
     }
 
     public Boolean isFinished() {
-        if (players.haveAllFoldExceptOne() || players.areAllIgnored()) {
+        if (players.haveAllFoldedExceptOne() || players.areAllIgnored()) {
             return true;
         } else {
             return players.haveAllPlayed() && players.haveAllEqualBet();

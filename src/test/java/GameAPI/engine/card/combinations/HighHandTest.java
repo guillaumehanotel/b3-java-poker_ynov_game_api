@@ -7,6 +7,7 @@ import GameAPI.engine.card.Suit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -30,8 +31,16 @@ class HighHandTest {
         new Card(Suit.HEART, Rank.Eight),
         new Card(Suit.DIAMOND, Rank.Jack),
         new Card(Suit.DIAMOND, Rank.King),
-        new Card(Suit.DIAMOND, Rank.Ace));
+        new Card(Suit.DIAMOND, Rank.Ace)
+    );
     HighHand actual = new HighHand(sourceCards);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  void buildFrom1Card() {
+    HighHand expected = new HighHand(Collections.singletonList(Rank.Ace));
+    HighHand actual = new HighHand(new Cards(new Card(Suit.CLUB, Rank.Ace)));
     assertEquals(expected, actual);
   }
 
