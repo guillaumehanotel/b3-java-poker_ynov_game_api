@@ -1,6 +1,6 @@
 package GameAPI.controllers;
 
-import GameAPI.engine.ResultStat;
+import GameAPI.stat.ResultStat;
 import GameAPI.engine.action.Action;
 import GameAPI.engine.card.Card;
 import GameAPI.engine.game.Game;

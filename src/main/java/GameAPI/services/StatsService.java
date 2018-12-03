@@ -1,7 +1,7 @@
 package GameAPI.services;
 
 import GameAPI.clients.IResultClient;
-import GameAPI.engine.ResultStat;
+import GameAPI.stat.ResultStat;
 import GameAPI.engine.game.Result;
 import feign.Feign;
 import feign.Logger;
