@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Data
 public class Game {
 
-    static final Integer NB_PLAYER_MAX = 3;
+    static final Integer NB_PLAYER_MAX = 4;
     static final Integer DELAY = 500;
 
 

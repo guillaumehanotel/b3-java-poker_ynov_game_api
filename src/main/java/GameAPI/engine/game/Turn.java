@@ -74,11 +74,8 @@ public class Turn {
     }
 
     public Boolean isFinished() {
-        if (players.haveAllFoldedExceptOne() || players.areAllIgnored()) {
-            return true;
-        } else {
-            return players.haveAllPlayed() && players.haveAllEqualBet();
-        }
+        if (players.haveAllFoldedExceptOne() || players.areAllIgnored()) return true;
+        return players.haveAllPlayed() && players.haveAllEqualBet();
     }
 
     private void delay() {

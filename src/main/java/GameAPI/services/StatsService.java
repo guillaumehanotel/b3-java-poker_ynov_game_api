@@ -22,7 +22,7 @@ public class StatsService {
             .decoder(new GsonDecoder())
             .logger(new Slf4jLogger(IResultClient.class))
             .logLevel(Logger.Level.FULL)
-            .target(IResultClient.class, "http://localhost:8082");
+            .target(IResultClient.class, "http://192.168.43.22:8082");
 
     public Result createResults(Integer userId, Integer gameId, Integer moneyWon, String combinaison) {
         return iResultClient.createResult(userId, gameId, moneyWon, combinaison);

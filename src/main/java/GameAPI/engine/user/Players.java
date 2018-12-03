@@ -42,7 +42,13 @@ public class Players extends ArrayList<Player> {
      * Fait passer le tour au prochain joueur (qu'il soit éliminé/couché ou non)
      */
     private void passToNextPlayer(){
-        playingPlayerPosition = (playingPlayerPosition + 1) % size();
+        try {
+            playingPlayerPosition = (playingPlayerPosition + 1) % size();
+        } catch (NullPointerException e) {
+            log.info("playingPlayerPosition is null : reset to 0");
+            // This error happens sometimes for still unknown reasons
+            playingPlayerPosition = 0;
+        }
     }
 
     /**
@@ -87,13 +93,19 @@ public class Players extends ArrayList<Player> {
         HashMap<PlayerStatus, List<Player>> players = new HashMap<>();
         players.put(PlayerStatus.WINNER, new ArrayList<>());
         players.put(PlayerStatus.LOOSER, new ArrayList<>());
-        Player winner = stream().max(Player::comparesCards).orElse(null);
-        if (playingPlayers != null)
+        if (playingPlayers != null) {
+            Player winner = playingPlayers.stream()
+                .max(Player::comparesCards)
+                .orElseThrow(() -> new RuntimeException("No winner"));
             for (Player player : playingPlayers) {
                 Integer compareOutput = player.comparesCards(winner);
-                if (compareOutput == 0) players.get(PlayerStatus.WINNER).add(player);
-                else if (compareOutput == -1) players.get(PlayerStatus.LOOSER).add(player);
+                if (compareOutput == 0) {
+                    players.get(PlayerStatus.WINNER).add(player);
+                } else if (compareOutput == -1) {
+                    players.get(PlayerStatus.LOOSER).add(player);
+                }
             }
+        }
         return players;
     }
 
@@ -132,7 +144,6 @@ public class Players extends ArrayList<Player> {
 
     /**
      * Si le nb de joueurs ignorés est égale au nb total de joueur
-     * @return
      */
     public boolean areAllIgnored() {
         return stream()

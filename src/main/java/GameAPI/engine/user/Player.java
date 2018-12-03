@@ -64,6 +64,7 @@ public class Player {
         this.downCards.clear();
         this.currentBet = 0;
         this.roles.clear();
+        this._combination = null;
     }
 
     public void resetTurn() {
@@ -153,7 +154,7 @@ public class Player {
         log.info(this.user.getUsername() + " WINS " + earnedMoney);
         this.chips += earnedMoney;
         // No need to build combination since to know if this win we need to build it, so it's already built
-        this.combination = _combination != null ? _combination.toString() : null;
+        this.combination = _combination != null ? _combination.toString() : getCombination();
         log.info("Winning combination : " + _combination);
         this.earnedMoney = earnedMoney;
         user.setMoney(user.getMoney() + this.earnedMoney);
@@ -196,6 +197,7 @@ public class Player {
         }
         Combination bestCombination = combinations.stream().max(Combination::compares).orElse(null);
         this._combination = bestCombination;
+        log.info(this + " best combination is : " + (bestCombination != null ? bestCombination.toString() : null));
         return bestCombination;
     }
 

@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StraightTest {
+  // todo rename quinte into straight
 
   @Test
   void Quinte() {
